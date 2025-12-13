@@ -51,9 +51,9 @@ const Navbar = () => {
                     </div>
 
                     <div className="hidden md:flex items-center space-x-4">
-                        <button className="text-slate-700 hover:text-blue-600 font-semibold px-4 py-2 transition-colors">
+                        <Link to="/login" className="text-slate-700 hover:text-blue-600 font-semibold px-4 py-2 transition-colors">
                             Login
-                        </button>
+                        </Link>
                         <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-semibold transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 transform hover:-translate-y-0.5">
                             Book Appointment
                         </button>
@@ -95,9 +95,9 @@ const Navbar = () => {
                         Contact
                     </Link>
                     <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col space-y-3">
-                        <button className="w-full text-center text-slate-700 font-semibold py-2">
+                        <Link to="/login" className="w-full text-center text-slate-700 font-semibold py-2">
                             Login
-                        </button>
+                        </Link>
                         <button className="w-full text-center bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/20">
                             Book Appointment
                         </button>
