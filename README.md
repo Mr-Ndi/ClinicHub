@@ -1,17 +1,120 @@
-# Quarks Group Internship Task – FastAPI REST API
+# Poli Healthcare Management System - User Flow
 
-This is a simple in-memory REST API built using **Python** and **FastAPI**, submitted as part of the Quarks Group backend internship technical assessment.
+## 1. User Flow (Patient Interaction)
 
-## 🚀 Tech Stack
-- **Language**: Python
-- **Framework**: FastAPI
-- **Data Store**: In-memory (no database)
+### Landing Page (Home)
+- **Options**:  
+  - Log in  
+  - Register  
 
-## ▶️ Running the API
+- **Overview**: A brief introduction to the system and its features.  
 
-```bash
-# 1. Install dependencies
-pip install -r requirements.txt
+- **Action**: Patient chooses to either log in or register.
 
-# 2. Start the server
-uvicorn main:app --reload
+---
+
+### 2. Log In / Register
+
+- **Log In**:  
+  - Enter credentials (email and password).  
+
+- **Register**:  
+  - Create a new account by providing personal information (name, email, password, etc.).
+
+---
+
+### 3. Dashboard (Post-login)
+- **Navigation**:  
+  - **Appointments**  
+  - **Health Records**  
+  - **Prescriptions**  
+  - **Billing**  
+  - **Profile**
+
+- **Actions**:  
+  - View upcoming appointments  
+  - View or request medical records  
+  - Make new appointments with doctors
+
+---
+
+## 4. Appointment Booking Flow
+
+### 4.1 Select Doctor
+- **Option**:  
+  - Filter by specialization, availability, and location.
+
+### 4.2 Choose Time Slot
+- **Action**:  
+  - Patient picks an available time for consultation.
+
+### 4.3 Confirm Appointment
+- **Action**:  
+  - Confirm appointment details and request booking.
+
+### 4.4 Confirmation Page
+- **Action**:  
+  - Patient receives a confirmation message and calendar sync option.
+
+---
+
+## 5. Doctor's Interaction Flow
+
+### 5.1 Log In
+- **Action**:  
+  - Doctors log into their dashboard using credentials.
+
+### 5.2 Dashboard (Doctor)
+- **Options**:  
+  - **Patient List**  
+  - **Appointments**  
+  - **Prescriptions**  
+  - **Health Records**
+
+- **Action**:  
+  - View and manage patient appointments, prescriptions, and health records.
+
+### 5.3 Appointment Management
+- **Action**:  
+  - Accept/Reject/Reschedule appointments with patients.
+
+### 5.4 Prescriptions
+- **Action**:  
+  - Create or update prescriptions, view patient history.
+
+---
+
+## 6. Backend Flow
+
+### 6.1 Authentication and Authorization
+- **Login/Signup**:  
+  - Handle user authentication via JWT tokens.
+
+- **Admin**:  
+  - Admin can manage users (patients, doctors), oversee appointments, etc.
+
+### 6.2 Database
+- **PostgreSQL**:  
+  - Store data such as patient records, appointment schedules, prescriptions, and billing info.
+
+### 6.3 Appointment Management
+- **Endpoints**:  
+  - CRUD operations for creating, updating, viewing, and deleting appointments.
+
+- **Appointments Table**:  
+  - Contains patient details, appointment time, doctor info, and status (pending, confirmed, etc.).
+
+### 6.4 Prescriptions Management
+- **Endpoints**:  
+  - CRUD operations for creating, viewing, and updating prescriptions.
+
+- **Prescriptions Table**:  
+  - Contains details like medication, dosage, and doctor's notes.
+
+---
+
+## 7. API Flow Example
+
+### 7.1 Patient Requests to View Appointments
+- **Endpoint**:  
+  - `GET /api/appointment
