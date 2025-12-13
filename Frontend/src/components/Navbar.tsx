@@ -36,12 +36,18 @@ const Navbar = () => {
                             Services
                             <span className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${isActive('/services') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
                         </Link>
-                        {['Doctors', 'About', 'Contact'].map((item) => (
-                            <a key={item} href="#" className="text-slate-600 hover:text-blue-600 font-medium text-sm transition-colors relative group">
-                                {item}
-                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-                            </a>
-                        ))}
+                        <Link to="/doctors" className={`font-medium text-sm transition-colors relative group ${isActive('/doctors') ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>
+                            Doctors
+                            <span className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${isActive('/doctors') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                        </Link>
+                        <Link to="/about" className={`font-medium text-sm transition-colors relative group ${isActive('/about') ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>
+                            About
+                            <span className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${isActive('/about') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                        </Link>
+                        <Link to="/contact" className={`font-medium text-sm transition-colors relative group ${isActive('/contact') ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>
+                            Contact
+                            <span className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${isActive('/contact') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                        </Link>
                     </div>
 
                     <div className="hidden md:flex items-center space-x-4">
@@ -79,11 +85,15 @@ const Navbar = () => {
                     <Link to="/services" className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">
                         Services
                     </Link>
-                    {['Doctors', 'About', 'Contact'].map((item) => (
-                        <a key={item} href="#" className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">
-                            {item}
-                        </a>
-                    ))}
+                    <Link to="/doctors" className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">
+                        Doctors
+                    </Link>
+                    <Link to="/about" className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">
+                        About
+                    </Link>
+                    <Link to="/contact" className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">
+                        Contact
+                    </Link>
                     <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col space-y-3">
                         <button className="w-full text-center text-slate-700 font-semibold py-2">
                             Login
