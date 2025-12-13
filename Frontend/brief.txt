@@ -1,0 +1,280 @@
+Assignments & Project Themes
+1. Shakira
+Project Theme: Tourism Management System
+Project Name: Choose a creative name (e.g., WanderHub, TravelEase,
+Explore360)
+Frontend Tech:
+●​ React + Vite + TypeScript
+●​ Tailwind CSS with a vibrant, travel-inspired palette
+●​ Fully responsive (mobile-first)
+
+Backend Tech:
+●​ FastAPI or Django
+●​ PostgreSQL/MySQL
+
+Core Features:
+●​ JWT Authentication
+●​ Destination listings + filters
+●​ Booking system
+●​ Reviews and ratings
+●​ Admin dashboard for tour operators
+●​ Simulated payment integration
+
+Extra Features (Pick 3+):
+●​ Real-time chat
+●​ Interactive maps
+●​ Weather API
+●​ Multi-language support
+●​ PWA (offline mode)
+●​ Recommendation engine​
+
+2. Pendo
+Project Theme: E-Commerce Platform
+Project Name: Choose a creative name (e.g., ShopNex, MarketHub,
+QuickCart)
+Frontend Tech:
+●​ React + Vite + TypeScript
+●​ Tailwind CSS with modern e-commerce palette
+●​ Component library (Headless UI or similar)
+
+Backend Tech:
+●​ Django + Django REST Framework
+●​ PostgreSQL
+
+Core Features:
+●​ Authentication
+●​ Product catalog
+●​ Cart and checkout
+●​ Order management
+●​ Admin product panel
+●​ Search and filtering
+
+Extra Features (Pick 3+):
+●​ Real-time inventory
+●​ AI-powered recommendations
+●​ Live order tracking
+●​ Wishlist and comparison
+●​ Social media integration
+●​ Advanced analytics dashboard
+
+3. Poli
+Project Theme: Healthcare Management System
+Project Name: Choose a creative name (e.g., MediCare Plus, HealthSync,
+ClinicHub)
+Frontend Tech:
+●​ React + Vite + TypeScript
+●​ Tailwind CSS with professional healthcare palette
+●​ Accessibility-focused (WCAG compliant)
+
+Backend Tech:
+●​ FastAPI or Django
+●​ PostgreSQL
+
+Core Features:
+●​ Patient registration
+●​ Appointment scheduling
+●​ Electronic health records (simulated)
+●​ Doctor/staff management
+●​ Prescriptions
+●​ Billing system
+
+Extra Features (Pick 3+):
+●​ Telemedicine video calls
+●​ Health monitoring dashboard
+●​ OCR prescription scanner
+●​ Emergency alerts
+●​ Inventory management
+●​ Health analytics​
+
+4. Fred
+Project Theme: Learning Management System
+Project Name: Choose a creative name (e.g., EduSphere, LearnHub,
+SkillCraft)
+Frontend Tech:
+●​ React + Vite + TypeScript
+●​ Tailwind CSS with education-focused palette
+●​ Interactive UI components
+
+Backend Tech:
+●​ Django + Django REST Framework
+●​ PostgreSQL
+
+Core Features:
+●​ User roles: Student, Instructor, Admin
+●​ Course management
+●​ Video/content delivery
+●​ Quizzes and assessments
+●​ Progress tracking
+●​ Discussion forums
+
+Extra Features (Pick 3+):
+●​ Live virtual classroom
+●​ AI-powered learning paths
+●​ Gamification
+●​ Certificate generation
+●​ Optional mobile app
+●​ Analytics and reporting​
+
+Design Requirements
+Color Palettes
+●​ Tourism: Vibrant, adventurous (teal, orange, blue)
+●​ E-commerce: Trustworthy, action-focused (blue, green, strong CTA colors)
+●​ Healthcare: Calm, professional (blue, white, soft green)
+●​ LMS: Engaging and focused (purple, blue, yellow accents)
+
+Each intern must ensure:
+●​ Custom color palette
+●​ Light and dark mode
+●​ WCAG 2.1 AA accessibility compliance
+
+Technical Requirements
+Frontend (All Projects):
+●​ React 18+, TypeScript
+●​ Vite
+●​ Tailwind CSS
+●​ State management (Context, Redux Toolkit, or Zustand)
+●​ React Router
+●​ React Hook Form + Zod
+●​ Axios or React Query
+●​ Vitest + React Testing Library
+●​ ESLint + Prettier setup
+
+Backend Options:
+Option A — Django (Recommended for Pendo & Fred)
+●​ Django 4.2+, DRF
+●​ PostgreSQL
+●​ Simple JWT
+●​ CORS headers​
+
+Option B — FastAPI (Recommended for Shakira & Poli)
+●​ FastAPI with SQLAlchemy
+●​ Alembic migrations
+●​ JWT authentication
+●​ Background tasks (Celery/ARQ)
+●​ WebSockets for real-time components
+
+Project Structure
+project-name/
+├── frontend/
+│ ├── src/
+│ ├── public/
+│ ├── package.json
+│ └── tailwind.config.js
+├── backend/
+│ ├── app/
+│ ├── tests/
+│ └── main.py or manage.py
+└── docker-compose.yml
+
+Deployment Requirements
+Each intern must deploy:
+
+Frontend:
+●​ Vercel, Netlify, AWS Amplify
+
+Backend:
+●​ Render, Railway, AWS EC2, etc.
+
+Database:
+●​ Supabase, AWS RDS, or any cloud PostgreSQL​
+
+File Storage:
+●​ AWS S3, Cloudinary, or similar
+
+Timeline & Deadlines
+Final Deadline: Wednesday, 17th December 2026
+Project Schedule:
+●​ Planning & Design
+●​ Development
+●​ Testing employment & Documentation
+●​ Video Presentation
+
+Submission Requirements
+Submit To: nexvetures@gmail.com
+Subject Format: Internship Final Project - [Your Name] - [Project Name]
+Mandatory Deliverables:
+
+1. GitHub Repository
+●​ Clean folder structure
+●​ README with overview, setup steps, API documentation, and screenshots
+●​ Proper commit history
+
+2. Live Links
+●​ Hosted frontend
+●​ Hosted backend API
+●​ API docs (Swagger or Redoc)​
+
+3. Video Presentation (10–15 min)
+●​ Must show your face
+●​ Demo + code walkthrough
+●​ Challenges and solutions
+●​ Upload unlisted to YouTube or Google Drive
+
+4. Documentation
+●​ Technical documentation
+●​ User manual
+●​ Deployment guide
+
+Evaluation Criteria
+Technical Excellence — 40%
+●​ Code quality
+●​ Architecture
+●​ Optimization
+●​ Security
+●​ Testing
+
+Features & Functionality — 30%
+●​ Core features
+●​ Extra features
+●​ UX
+●​ Responsiveness
+
+Documentation & Presentation — 20%
+●​ Video quality
+●​ Explanation
+●​ Documentation​
+
+Deployment & Professionalism — 10%
+●​ Successful deployment
+●​ Timeliness
+●​ Attention to detail
+
+Additional Guidelines
+Code Quality
+●​ DRY principles
+●​ Error handling
+●​ Reusable components
+●​ Meaningful comments
+
+Security
+●​ Input validation
+●​ SQL injection prevention
+●​ XSS protection
+●​ Secure authentication
+
+Performance
+●​ Lazy loading
+●​ Asset optimization
+●​ Database indexing
+●​ Caching
+
+Best Practices
+●​ Git branching
+●​ Pull request workflow
+●​ Code reviews
+●​ Optional CI/CD​
+
+Support & Resources
+●​ React: react.dev
+●​ Tailwind CSS: tailwindcss.com
+●​ Django: docs.djangoproject.com
+●​ FastAPI: fastapi.tiangolo.com
+
+Final Reminder
+Deadline: Wednesday, 17th December 2026 — 11:59 PM UTC​
+Submission Email: nexvetures@gmail.com​
+Late submissions will not be accepted.
+This final project is an opportunity to showcase your full-stack development skills. Deliver your
+best work.
+
+
