@@ -10,6 +10,12 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import DashboardLayout from './layouts/DashboardLayout';
 import DashboardHome from './pages/doctor/DashboardHome';
+import Appointments from './pages/doctor/Appointments';
+import Patients from './pages/doctor/Patients';
+import Prescriptions from './pages/doctor/Prescriptions';
+import MedicalRecords from './pages/doctor/MedicalRecords';
+import Profile from './pages/doctor/Profile';
+import PatientProfile from './pages/doctor/PatientProfile';
 
 function App() {
   return (
@@ -83,7 +89,12 @@ function App() {
         {/* Doctor Dashboard Routes */}
         <Route path="/doctor" element={<DashboardLayout />}>
           <Route path="dashboard" element={<DashboardHome />} />
-          {/* Add other dashboard routes here */}
+          <Route path="appointments" element={<Appointments />} />
+          <Route path="patients" element={<Patients />} />
+          <Route path="patients/:id" element={<PatientProfile />} />
+          <Route path="prescriptions" element={<Prescriptions />} />
+          <Route path="records" element={<MedicalRecords />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     </Router>
