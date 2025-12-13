@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -12,19 +14,29 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const isActive = (path: string) => location.pathname === path;
+
     return (
         <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-2' : 'bg-transparent py-4'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
-                    <div className="flex-shrink-0 flex items-center gap-2">
+                    <Link to="/" className="flex-shrink-0 flex items-center gap-2">
                         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                             <span className="text-white font-bold text-xl">C</span>
                         </div>
                         <span className="text-slate-900 text-2xl font-bold tracking-tight">Clinic<span className="text-blue-600">Hub</span></span>
-                    </div>
+                    </Link>
 
                     <div className="hidden md:flex space-x-8 items-center">
-                        {['Home', 'Services', 'Doctors', 'About', 'Contact'].map((item) => (
+                        <Link to="/" className={`font-medium text-sm transition-colors relative group ${isActive('/') ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>
+                            Home
+                            <span className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${isActive('/') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                        </Link>
+                        <Link to="/services" className={`font-medium text-sm transition-colors relative group ${isActive('/services') ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>
+                            Services
+                            <span className={`absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ${isActive('/services') ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                        </Link>
+                        {['Doctors', 'About', 'Contact'].map((item) => (
                             <a key={item} href="#" className="text-slate-600 hover:text-blue-600 font-medium text-sm transition-colors relative group">
                                 {item}
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
@@ -61,7 +73,13 @@ const Navbar = () => {
             {/* Mobile menu */}
             <div className={`md:hidden absolute w-full bg-white border-b border-slate-100 transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
                 <div className="px-4 pt-2 pb-6 space-y-2 shadow-lg">
-                    {['Home', 'Services', 'Doctors', 'About', 'Contact'].map((item) => (
+                    <Link to="/" className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">
+                        Home
+                    </Link>
+                    <Link to="/services" className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">
+                        Services
+                    </Link>
+                    {['Doctors', 'About', 'Contact'].map((item) => (
                         <a key={item} href="#" className="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">
                             {item}
                         </a>
