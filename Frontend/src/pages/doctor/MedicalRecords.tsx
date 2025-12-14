@@ -1,4 +1,5 @@
 
+
 const MedicalRecords = () => {
     const records = [
         { id: 1, patient: 'John Doe', type: 'Lab Result', title: 'Complete Blood Count (CBC)', date: 'Dec 14, 2025', doctor: 'Dr. Sarah Johnson' },
@@ -11,9 +12,9 @@ const MedicalRecords = () => {
     return (
         <div>
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-slate-900">Medical Records</h1>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Medical Records</h1>
                 <div className="flex gap-4">
-                    <select className="border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-slate-600 bg-white">
+                    <select className="border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-slate-600 dark:text-white bg-white dark:bg-slate-900">
                         <option>All Types</option>
                         <option>Lab Results</option>
                         <option>X-Rays</option>
@@ -27,7 +28,7 @@ const MedicalRecords = () => {
 
             <div className="space-y-4">
                 {records.map((record) => (
-                    <div key={record.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow flex items-center justify-between">
+                    <div key={record.id} className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold
                 ${record.type === 'Lab Result' ? 'bg-purple-500' :
@@ -39,13 +40,13 @@ const MedicalRecords = () => {
                                 {record.type === 'Prescription' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>}
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-slate-900">{record.title}</h3>
-                                <p className="text-sm text-slate-500">Patient: <span className="font-medium text-slate-700">{record.patient}</span> • {record.date}</p>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">{record.title}</h3>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">Patient: <span className="font-medium text-slate-700 dark:text-slate-300">{record.patient}</span> • {record.date}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
-                            <span className="text-sm text-slate-500 hidden md:block">By {record.doctor}</span>
-                            <button className="text-blue-600 hover:text-blue-800 font-medium text-sm border border-blue-200 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors">
+                            <span className="text-sm text-slate-500 dark:text-slate-400 hidden md:block">By {record.doctor}</span>
+                            <button className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-sm border border-blue-200 dark:border-blue-900/30 px-3 py-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
                                 View Details
                             </button>
                         </div>

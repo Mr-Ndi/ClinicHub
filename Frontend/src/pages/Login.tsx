@@ -93,6 +93,19 @@ const Login = () => {
                         </div>
                     </form>
 
+                    <div className="mt-6 pt-6 border-t border-slate-100 text-center">
+                        <p className="text-slate-500 mb-4">For Demo Purposes:</p>
+                        <div className="flex gap-4 justify-center">
+                            <Link to="/doctor/dashboard" className="text-sm font-semibold text-blue-600 hover:underline">
+                                Doctor Login
+                            </Link>
+                            <span className="text-slate-300">|</span>
+                            <Link to="/patient/dashboard" className="text-sm font-semibold text-green-600 hover:underline">
+                                Patient Login
+                            </Link>
+                        </div>
+                    </div>
+
                     <div className="mt-6">
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
