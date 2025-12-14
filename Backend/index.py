@@ -7,6 +7,8 @@ from src.routes.doctorRouter import doctorRouter
 from src.routes.oauthRouter import oauthRouter
 from src.routes.passwordRouter import passwordRouter
 from src.routes.authRouter import authRouter
+from src.routes.videoCallRouter import videoCallRouter
+from src.routes.healthMetricsRouter import healthMetricsRouter
 
 
 app = FastAPI(
@@ -37,6 +39,8 @@ app.include_router(doctorRouter)
 app.include_router(oauthRouter)
 app.include_router(passwordRouter)
 app.include_router(authRouter)
+app.include_router(videoCallRouter)
+app.include_router(healthMetricsRouter)
 
 @app.get("/")
 async def read_root():
