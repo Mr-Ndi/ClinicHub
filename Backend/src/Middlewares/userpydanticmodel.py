@@ -3,6 +3,12 @@ from typing import Optional
 from enum import Enum
 from uuid import UUID
 
+class UserOAuthRegister(BaseModel):
+	email: EmailStr
+	name: Optional[str] = None
+	profile_image: Optional[str] = None
+	role: Optional[UserRole] = None	
+
 class UserRole(str, Enum):
 	patient = "patient"
 	doctor = "doctor"
