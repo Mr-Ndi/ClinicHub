@@ -32,6 +32,8 @@ import AdminDashboardHome from './pages/admin/AdminDashboardHome';
 import DoctorManagement from './pages/admin/DoctorManagement';
 import PatientManagement from './pages/admin/PatientManagement';
 import AdminSettings from './pages/admin/AdminSettings';
+import PatientProfileAdmin from './pages/admin/PatientProfileAdmin';
+import AdminProfile from './pages/admin/AdminProfile';
 
 function App() {
   return (
@@ -130,7 +132,9 @@ function App() {
           <Route path="dashboard" element={<AdminDashboardHome />} />
           <Route path="doctors" element={<DoctorManagement />} />
           <Route path="patients" element={<PatientManagement />} />
+          <Route path="patients/:id" element={<PatientProfileAdmin />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
       </Routes>
     </Router>

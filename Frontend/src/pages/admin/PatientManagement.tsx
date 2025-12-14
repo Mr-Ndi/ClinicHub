@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const PatientManagement = () => {
     const [patients] = useState([
@@ -59,9 +60,12 @@ const PatientManagement = () => {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm">
+                                        <Link
+                                            to={`/admin/patients/${patient.id}`}
+                                            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm"
+                                        >
                                             View Details
-                                        </button>
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}

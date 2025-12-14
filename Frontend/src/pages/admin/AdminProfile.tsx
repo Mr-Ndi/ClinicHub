@@ -1,0 +1,59 @@
+const AdminProfile = () => {
+    return (
+        <div>
+            <div className="mb-8">
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">My Profile</h1>
+                <p className="text-slate-600 dark:text-slate-400">Manage your account settings</p>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-8 max-w-2xl">
+                <div className="flex items-center gap-6 mb-8">
+                    <div className="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-3xl font-bold">
+                        AD
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Admin User</h2>
+                        <p className="text-slate-500 dark:text-slate-400">Administrator</p>
+                        <p className="text-slate-500 dark:text-slate-400">admin@clinichub.com</p>
+                    </div>
+                </div>
+
+                <form className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">First Name</label>
+                            <input
+                                type="text"
+                                defaultValue="Admin"
+                                className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Last Name</label>
+                            <input
+                                type="text"
+                                defaultValue="User"
+                                className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
+                        <input
+                            type="email"
+                            defaultValue="admin@clinichub.com"
+                            className="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                    </div>
+                    <div>
+                        <button type="button" className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default AdminProfile;
