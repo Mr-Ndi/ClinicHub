@@ -1,6 +1,11 @@
+
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 import uvicorn
+from src.routes.patientRouter import patientRouter
+from src.routes.doctorRouter import doctorRouter
+from src.routes.oauthRouter import oauthRouter
+
 
 app = FastAPI(
     docs_url="/docs",
@@ -10,6 +15,12 @@ app = FastAPI(
 )
 
 
+
+# Define allowed origins for CORS
+origins = [
+    "*"
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -17,6 +28,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include routers
+app.include_router(patientRouter)
+app.include_router(doctorRouter)
+app.include_router(oauthRouter)
 
 @app.get("/")
 async def read_root():
