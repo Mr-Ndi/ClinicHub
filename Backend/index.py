@@ -5,6 +5,8 @@ import uvicorn
 from src.routes.patientRouter import patientRouter
 from src.routes.doctorRouter import doctorRouter
 from src.routes.oauthRouter import oauthRouter
+from src.routes.passwordRouter import passwordRouter
+from src.routes.authRouter import authRouter
 
 
 app = FastAPI(
@@ -33,6 +35,8 @@ app.add_middleware(
 app.include_router(patientRouter)
 app.include_router(doctorRouter)
 app.include_router(oauthRouter)
+app.include_router(passwordRouter)
+app.include_router(authRouter)
 
 @app.get("/")
 async def read_root():
