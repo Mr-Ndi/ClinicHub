@@ -27,6 +27,12 @@ import PatientBilling from './pages/patient/PatientBilling';
 import PatientProfilePatient from './pages/patient/PatientProfile';
 import PatientTelemedicine from './pages/patient/PatientTelemedicine';
 
+import AdminDashboardLayout from './layouts/AdminDashboardLayout';
+import AdminDashboardHome from './pages/admin/AdminDashboardHome';
+import DoctorManagement from './pages/admin/DoctorManagement';
+import PatientManagement from './pages/admin/PatientManagement';
+import AdminSettings from './pages/admin/AdminSettings';
+
 function App() {
   return (
     <Router>
@@ -117,6 +123,14 @@ function App() {
           <Route path="billing" element={<PatientBilling />} />
           <Route path="telemedicine" element={<PatientTelemedicine />} />
           <Route path="profile" element={<PatientProfilePatient />} />
+        </Route>
+
+        {/* Admin Dashboard Routes */}
+        <Route path="/admin" element={<AdminDashboardLayout />}>
+          <Route path="dashboard" element={<AdminDashboardHome />} />
+          <Route path="doctors" element={<DoctorManagement />} />
+          <Route path="patients" element={<PatientManagement />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Routes>
     </Router>
