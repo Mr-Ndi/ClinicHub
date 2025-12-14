@@ -12,6 +12,7 @@ from src.routes.healthMetricsRouter import healthMetricsRouter
 from src.routes.prescriptionRouter import prescriptionRouter
 from src.routes.medicalrecordRouter import medicalrecordRouter
 from src.routes.stockRouter import stockRouter
+from src.routes.billingRouter import billingRouter
 
 
 app = FastAPI(
@@ -47,6 +48,7 @@ app.include_router(healthMetricsRouter)
 app.include_router(prescriptionRouter)
 app.include_router(medicalrecordRouter)
 app.include_router(stockRouter)
+app.include_router(billingRouter)
 
 @app.get("/")
 async def read_root():
