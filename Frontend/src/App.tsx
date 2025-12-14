@@ -16,6 +16,7 @@ import Prescriptions from './pages/doctor/Prescriptions';
 import MedicalRecords from './pages/doctor/MedicalRecords';
 import Profile from './pages/doctor/Profile';
 import PatientProfileDoctor from './pages/doctor/PatientProfile';
+import Telemedicine from './pages/doctor/Telemedicine';
 
 import PatientDashboardLayout from './layouts/PatientDashboardLayout';
 import PatientDashboardHome from './pages/patient/PatientDashboardHome';
@@ -24,6 +25,7 @@ import PatientMedicalRecords from './pages/patient/PatientMedicalRecords';
 import PatientPrescriptions from './pages/patient/PatientPrescriptions';
 import PatientBilling from './pages/patient/PatientBilling';
 import PatientProfilePatient from './pages/patient/PatientProfile';
+import PatientTelemedicine from './pages/patient/PatientTelemedicine';
 
 function App() {
   return (
@@ -102,6 +104,7 @@ function App() {
           <Route path="patients/:id" element={<PatientProfileDoctor />} />
           <Route path="prescriptions" element={<Prescriptions />} />
           <Route path="records" element={<MedicalRecords />} />
+          <Route path="telemedicine" element={<Telemedicine />} />
           <Route path="profile" element={<Profile />} />
         </Route>
 
@@ -112,6 +115,7 @@ function App() {
           <Route path="records" element={<PatientMedicalRecords />} />
           <Route path="prescriptions" element={<PatientPrescriptions />} />
           <Route path="billing" element={<PatientBilling />} />
+          <Route path="telemedicine" element={<PatientTelemedicine />} />
           <Route path="profile" element={<PatientProfilePatient />} />
         </Route>
       </Routes>
