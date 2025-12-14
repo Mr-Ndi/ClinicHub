@@ -1,9 +1,23 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 import uvicorn
 
-app = FastAPI()
+app = FastAPI(
+    docs_url="/docs",
+    title="Clinichub Backend API",
+    redoc_url=None,
+    swagger_ui_parameters={"defaultModelsExpandDepth": -1}
+)
 
-print("Hey checkout the swagger on \n-----------------\n\t http://127.0.0.1:2739/docs\n-----------------")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.get("/")
 async def read_root():
     return {"Ubutumwa": "Server iri tayali !"}
