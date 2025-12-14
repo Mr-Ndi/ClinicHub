@@ -1,6 +1,8 @@
+
 from sqlalchemy.orm import Session
 from src.Models.usermodel import User, UserRole
 from src.Middlewares.userpydanticmodel import UserRegister, UserEdit
+from src.Utils.passwordHasher import hash_password
 from uuid import uuid4
 
 def create_user_patient(db: Session, user: UserRegister):
@@ -10,7 +12,7 @@ def create_user_patient(db: Session, user: UserRegister):
 		email=user.email,
 		phone=user.phone,
 		address=user.address,
-		password=user.password,  # Hash in real use
+		password=hash_password(user.password),
 		role=UserRole.PATIENT,
 		profile_image=user.profile_image
 	)

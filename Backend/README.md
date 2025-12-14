@@ -53,7 +53,23 @@ ClinicHub is a RESTful backend API for a healthcare management platform, designe
 
 ---
 
-## Getting Started
+
+## Environment & Configuration
+
+- Set the following environment variables as needed:
+   - `DATABASE_URL`: Database connection string (default: `sqlite:///./clinichub.db`)
+   - `SECRET_KEY`: Secret key for authentication (if using JWT or similar)
+   - Other variables as required by your deployment
+
+---
+
+## Authentication
+
+- All endpoints require authentication via JWT tokens (or your chosen method).
+- Passwords are securely hashed using Argon2 (see `src/Utils/passwordHasher.py`).
+- Admin users have elevated privileges and can manage doctors, patients, and appointments.
+
+---
 
 ### Prerequisites
 - Python 3.12+
@@ -81,6 +97,11 @@ ClinicHub is a RESTful backend API for a healthcare management platform, designe
    uvicorn index:app --reload
    ```
 
+5. (Optional) Seed the initial admin user:
+   ```bash
+   python scripts/seed_admin.py
+   ```
+
 ---
 
 ## Project Structure
@@ -88,8 +109,25 @@ ClinicHub is a RESTful backend API for a healthcare management platform, designe
 Backend/
 ├── index.py                # Main FastAPI app
 ├── chub/                   # Virtual environment (if used)
+├── scripts/
+│   └── seed_admin.py       # Script to seed initial admin user
+├── src/
+│   ├── Models/
+│   ├── Middlewares/
+│   ├── Services/
+│   └── Utils/
 ├── ...
 ```
+
+---
+
+## Testing
+
+To run tests (if available):
+```bash
+pytest
+```
+Or use your preferred test runner.
 
 ---
 
