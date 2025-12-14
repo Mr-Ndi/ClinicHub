@@ -1,73 +1,185 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# ClinicHub Frontend
 
-Currently, two official plugins are available:
+A modern healthcare management dashboard built with React, TypeScript, Vite, and Tailwind CSS.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Table of Contents
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [Features](#features)
+- [Pages & Structure](#pages--structure)
+- [User Roles & Permissions](#user-roles--permissions)
+- [API Endpoints](#api-endpoints)
+- [Setup & Development](#setup--development)
+- [Contributing](#contributing)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Patient, Doctor, and Admin dashboards
+- Appointment booking and management
+- Prescription and medical record tracking
+- User authentication (login/signup)
+- Responsive, accessible UI
+- Theme support (light/dark)
+- Role-based navigation and permissions
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Pages & Structure
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Public Pages:**
+  - `/` Home
+  - `/about` About
+  - `/services` Services
+  - `/doctors` Doctors List
+  - `/contact` Contact
+  - `/login` Login
+  - `/signup` Signup
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Patient Dashboard:**
+  - `/patient/dashboard` Overview
+  - `/patient/appointments` My Appointments
+  - `/patient/prescriptions` My Prescriptions
+  - `/patient/medical-records` My Medical Records
+  - `/patient/billing` Billing
+  - `/patient/profile` Profile
+  - `/patient/telemedicine` Telemedicine
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **Doctor Dashboard:**
+  - `/doctor/dashboard` Overview
+  - `/doctor/appointments` Appointments
+  - `/doctor/patients` Patient List
+  - `/doctor/patient-profile/:id` Patient Profile
+  - `/doctor/prescriptions` Prescriptions
+  - `/doctor/medical-records` Medical Records
+  - `/doctor/profile` Profile
+  - `/doctor/telemedicine` Telemedicine
+
+- **Admin Dashboard:**
+  - `/admin/dashboard` Overview
+  - `/admin/doctors` Doctor Management
+  - `/admin/patients` Patient Management
+  - `/admin/profile` Profile
+  - `/admin/settings` Settings
+
+---
+
+## User Roles & Permissions
+
+- **Patient:**  
+  Can view and manage their own appointments, prescriptions, records, billing, and profile.
+
+- **Doctor:**  
+  Can view/manage their appointments, see assigned patients, write prescriptions, access patient records, and update their profile.
+
+- **Admin:**  
+  Can manage all doctors and patients, oversee appointments, and update admin profile/settings.
+
+---
+
+## API Endpoints
+
+All endpoints use JSON. Below are key endpoints (see full API spec for details):
+
+### Patient
+
+- `GET /api/patient/appointments`  
+  Returns list of patient's appointments.
+- `POST /api/patient/appointments`  
+  Book a new appointment.
+- `GET /api/patient/prescriptions`  
+  Returns list of prescriptions.
+- `GET /api/patient/records`  
+  Returns medical records.
+- `GET /api/patient/profile`  
+  Returns profile info.
+- `PUT /api/patient/profile`  
+  Update profile.
+
+### Doctor
+
+- `GET /api/doctor/appointments`  
+  Returns doctor's appointments.
+- `POST /api/doctor/appointments/update-status`  
+  Update appointment status.
+- `GET /api/doctor/patients`  
+  List assigned patients.
+- `GET /api/doctor/patients/{id}`  
+  Patient details.
+- `GET /api/doctor/prescriptions`  
+  List prescriptions.
+- `POST /api/doctor/prescriptions`  
+  Create prescription.
+- `GET /api/doctor/patients/{id}/records`  
+  Patient records.
+- `POST /api/doctor/patients/{id}/records`  
+  Add record.
+- `GET /api/doctor/profile`  
+  Profile info.
+- `PUT /api/doctor/profile`  
+  Update profile.
+
+### Admin
+
+- `GET /api/admin/doctors`  
+  List all doctors.
+- `POST /api/admin/doctors`  
+  Add doctor.
+- `PUT /api/admin/doctors/{id}`  
+  Update doctor.
+- `DELETE /api/admin/doctors/{id}`  
+  Remove doctor.
+- `GET /api/admin/patients`  
+  List all patients.
+- `POST /api/admin/patients`  
+  Add patient.
+- `PUT /api/admin/patients/{id}`  
+  Update patient.
+- `DELETE /api/admin/patients/{id}`  
+  Remove patient.
+- `GET /api/admin/appointments`  
+  List all appointments.
+- `POST /api/admin/appointments/update-status`  
+  Update appointment status.
+- `GET /api/admin/profile`  
+  Admin profile.
+- `PUT /api/admin/profile`  
+  Update profile.
+
+---
+
+## Setup & Development
+
+1. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
+
+2. **Start development server:**
+   ```bash
+   pnpm dev
+   ```
+
+3. **Build for production:**
+   ```bash
+   pnpm build
+   ```
+
+4. **Lint code:**
+   ```bash
+   pnpm lint
+   ```
+
+---
+
+## Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+**ClinicHub Frontend**  
+Built with ❤️ using React, Tailwind, TypeScript, and Vite.
