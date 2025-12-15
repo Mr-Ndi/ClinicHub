@@ -1,0 +1,12 @@
+# Core framework
+fastapi==0.124.4
+uvicorn==0.38.0
+SQLAlchemy==2.0.45
+psycopg2-binary==2.9.11
+pydantic==2.12.5
+passlib==1.7.4
+python-dotenv==1.2.1
+PyJWT==2.10.1
+redis==7.1.0
+# Optional: for email validation (if needed)
+# email-validator
