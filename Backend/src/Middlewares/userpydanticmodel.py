@@ -1,3 +1,4 @@
+
 from pydantic import BaseModel, EmailStr, constr, Field
 from typing import Optional
 from enum import Enum
@@ -33,3 +34,7 @@ class UserEdit(BaseModel):
 	profile_image: Optional[str] = None
 	specialization: Optional[str] = None
 	license_number: Optional[str] = None
+
+class UserLogin(BaseModel):
+	email: EmailStr = Field(..., example="admin@clinichub.com")
+	password: str = Field(..., example="Admin#250")

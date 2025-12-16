@@ -15,12 +15,42 @@ from src.routes.stockRouter import stockRouter
 from src.routes.billingRouter import billingRouter
 
 
+
+
+from fastapi.openapi.utils import get_openapi
+
 app = FastAPI(
     docs_url="/docs",
     title="Clinichub Backend API",
     redoc_url=None,
     swagger_ui_parameters={"defaultModelsExpandDepth": -1}
 )
+
+# Only support Bearer token authentication in Swagger UI
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title=app.title,
+        version="1.0.0",
+        description=app.description,
+        routes=app.routes,
+    )
+    # Only Bearer token input, no OAuth2
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+        }
+    }
+    for path in openapi_schema["paths"].values():
+        for method in path.values():
+            method["security"] = [{"BearerAuth": []}]
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 
 
 
