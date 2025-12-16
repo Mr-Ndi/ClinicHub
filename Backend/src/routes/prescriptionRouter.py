@@ -1,4 +1,3 @@
-prescriptionRouter = APIRouter(prefix="/api/prescriptions", tags=["Prescriptions"])
 from fastapi import APIRouter, Depends, status, Body
 from sqlalchemy.orm import Session
 from src.Controllers.prescriptionController import (

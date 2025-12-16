@@ -1,4 +1,3 @@
-billingRouter = APIRouter(prefix="/api/billing", tags=["Billing"])
 from fastapi import APIRouter, Depends, status, Body
 from sqlalchemy.orm import Session
 from src.Controllers.billingController import (
