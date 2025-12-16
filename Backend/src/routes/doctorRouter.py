@@ -8,11 +8,12 @@ from src.Controllers.doctorController import (
     delete_doctor_profile_controller,
 )
 from src.Utils.db import get_db
+from src.Utils.dependencies import require_admin
 
 doctorRouter = APIRouter(prefix="/api/doctor", tags=["Doctor"])
 
-@doctorRouter.post("/register", status_code=status.HTTP_201_CREATED)
-def register_doctor(user: UserRegister = Body(...), db: Session = Depends(get_db)):
+@doctorRouter.post("/register", status_code=status.HTTP_201_CREATED, dependencies=[Depends(require_admin)])
+def register_doctor(user: UserRegister = Body(...), db: Session = Depends(get_db), admin=Depends(require_admin)):
     db_user = register_doctor_controller(db, user)
     return {"message": "Doctor registered successfully", "user_id": str(db_user.id)}
 
