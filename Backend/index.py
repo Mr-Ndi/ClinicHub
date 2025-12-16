@@ -1,4 +1,3 @@
-
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 import uvicorn
@@ -13,6 +12,8 @@ from src.routes.prescriptionRouter import prescriptionRouter
 from src.routes.medicalrecordRouter import medicalrecordRouter
 from src.routes.stockRouter import stockRouter
 from src.routes.billingRouter import billingRouter
+from src.routes.adminRouter import adminRouter
+from src.routes.dashboardRouter import router as dashboardRouter
 
 
 
@@ -79,6 +80,8 @@ app.include_router(prescriptionRouter)
 app.include_router(medicalrecordRouter)
 app.include_router(stockRouter)
 app.include_router(billingRouter)
+app.include_router(adminRouter)
+app.include_router(dashboardRouter)
 
 @app.get("/")
 async def read_root():
