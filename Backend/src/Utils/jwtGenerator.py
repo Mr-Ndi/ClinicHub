@@ -10,25 +10,48 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 exp = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
+
 REDIS_URL = os.getenv("REDIS_URL")
 
 try:
     ACCESS_TOKEN_EXPIRE_MINUTES = int(exp)
 except (TypeError, ValueError):
     ACCESS_TOKEN_EXPIRE_MINUTES = 30
-    
+
 if not SECRET_KEY or not ALGORITHM or not ACCESS_TOKEN_EXPIRE_MINUTES:
     raise EnvironmentError("JWT configuration is missing in environment variables .")
 
-redis_client = redis.from_url(REDIS_URL, decode_responses=True)
+# Only initialize redis_client if REDIS_URL is set and valid
+redis_client = None
+if REDIS_URL and REDIS_URL.startswith(("redis://", "rediss://", "unix://")):
+    redis_client = redis.from_url(REDIS_URL, decode_responses=True)
+
+
+import asyncio
 
 def create_access_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES):
-
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
     to_encode.update({"exp": expire})
-    
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    # Cache the JWT in Redis with expiration if redis_client is available
+    if redis_client:
+        key = f"jwt:{encoded_jwt}"
+        # Calculate TTL in seconds
+        ttl = int((expire - datetime.utcnow()).total_seconds())
+        # Use asyncio to set in Redis (since redis_client is async)
+        async def set_jwt():
+            await redis_client.setex(key, ttl, "valid")
+        try:
+            asyncio.get_event_loop().run_until_complete(set_jwt())
+        except RuntimeError:
+            # If no running event loop, create one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(set_jwt())
+            loop.close()
+
     return encoded_jwt
 
 def decode_access_token(token: str):
