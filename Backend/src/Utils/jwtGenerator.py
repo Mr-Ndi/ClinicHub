@@ -57,7 +57,7 @@ def create_access_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_M
 def decode_access_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload.get("user_id")
+        return payload
     except jwt.PyJWTError:
         return None
 

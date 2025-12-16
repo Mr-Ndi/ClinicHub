@@ -17,15 +17,15 @@ class UserOAuthRegister(BaseModel):
 	role: Optional[UserRole] = None
 
 class UserRegister(BaseModel):
-	name: str
-	email: EmailStr
-	phone: Optional[str] = None
-	address: Optional[str] = None
-	password: constr(min_length=6)
-	role: UserRole
-	profile_image: Optional[str] = None
-	specialization: Optional[str] = None
-	license_number: Optional[str] = None
+	name: str = Field("John Mubatiza", example="John Mubatiza")
+	email: EmailStr = Field("user@doctor.com", example="user@doctor.com")
+	phone: Optional[str] = Field("+250788888777", example="+250788888777")
+	address: Optional[str] = Field("KN 123 St", example="KN 123 St")
+	password: constr(min_length=6) = Field("Doctor#250", example="Doctor#250")
+	role: UserRole = Field("patient", example="patient")
+	profile_image: Optional[str] = Field("https://example.com/profile.jpg", example="https://example.com/profile.jpg")
+	specialization: Optional[str] = Field("General Medicine", example="General Medicine")
+	license_number: Optional[str] = Field("DOC123456", example="DOC123456")
 
 class UserEdit(BaseModel):
 	name: Optional[str] = None
