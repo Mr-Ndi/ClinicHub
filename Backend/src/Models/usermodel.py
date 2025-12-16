@@ -1,7 +1,9 @@
+
 from sqlalchemy import Column, Integer, String, DateTime, Enum
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects.postgresql import UUID
 import enum
-from uuid import UUID
+import uuid
 from datetime import datetime
 
 Base = declarative_base()
@@ -13,7 +15,7 @@ class UserRole(enum.Enum):
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(UUID, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     name = Column(String, nullable=True)
     email = Column(String, unique=True, nullable=False, index=True)
     phone = Column(String, nullable=True)
