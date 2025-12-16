@@ -8,7 +8,7 @@ from src.Controllers.doctorController import (
     delete_doctor_profile_controller,
 )
 from src.Utils.db import get_db
-from src.Utils.dependencies import require_admin
+from src.Utils.dependencies import require_admin, require_admin_or_doctor
 
 doctorRouter = APIRouter(prefix="/api/doctor", tags=["Doctor"])
 
@@ -17,15 +17,15 @@ def register_doctor(user: UserRegister = Body(...), db: Session = Depends(get_db
     db_user = register_doctor_controller(db, user)
     return {"message": "Doctor registered successfully", "user_id": str(db_user.id)}
 
-@doctorRouter.get("/profile/{user_id}")
-def get_profile(user_id: str, db: Session = Depends(get_db)):
+@doctorRouter.get("/profile/{user_id}", dependencies=[Depends(require_admin_or_doctor)])
+def get_profile(user_id: str, db: Session = Depends(get_db), user=Depends(require_admin_or_doctor)):
     return get_doctor_profile_controller(db, user_id)
 
-@doctorRouter.put("/profile/{user_id}")
-def update_profile(user_id: str, user: UserEdit = Body(...), db: Session = Depends(get_db)):
+@doctorRouter.put("/profile/{user_id}", dependencies=[Depends(require_admin_or_doctor)])
+def update_profile(user_id: str, user: UserEdit = Body(...), db: Session = Depends(get_db), current_user=Depends(require_admin_or_doctor)):
     updated = update_doctor_profile_controller(db, user_id, user)
     return {"message": "Profile updated", "user": updated}
 
-@doctorRouter.delete("/profile/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_profile(user_id: str, db: Session = Depends(get_db)):
+@doctorRouter.delete("/profile/{user_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin_or_doctor)])
+def delete_profile(user_id: str, db: Session = Depends(get_db), user=Depends(require_admin_or_doctor)):
     return delete_doctor_profile_controller(db, user_id)
