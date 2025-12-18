@@ -1,8 +1,117 @@
+import { useState, useEffect } from 'react';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
+import { api } from '../../services/api';
+import toast from 'react-hot-toast';
+
+interface PatientProfileData {
+    user_id: string;
+    name: string;
+    email: string;
+    phone?: string;
+    address?: string;
+    date_of_birth?: string;
+    gender?: string;
+    profile_image?: string | null;
+}
 
 const PatientProfile = () => {
     const { theme, toggleTheme } = useTheme();
+    const { user: authUser } = useAuth();
     const darkMode = theme === 'dark';
+    
+    const [profile, setProfile] = useState<PatientProfileData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        phone: '',
+        address: '',
+        date_of_birth: '',
+        gender: '',
+    });
+
+    useEffect(() => {
+        fetchProfile();
+    }, []);
+
+    const fetchProfile = async () => {
+        try {
+            setLoading(true);
+            const data = await api.patient.getProfile();
+            setProfile(data);
+            setFormData({
+                name: data.name || '',
+                phone: data.phone || '',
+                address: data.address || '',
+                date_of_birth: data.date_of_birth || '',
+                gender: data.gender || '',
+            });
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to load profile');
+            // Fallback to auth user data if API fails
+            if (authUser) {
+                setProfile({
+                    user_id: authUser.user_id,
+                    name: authUser.name,
+                    email: authUser.email,
+                    phone: authUser.phone || '',
+                    address: authUser.address || '',
+                    profile_image: authUser.profile_image || null,
+                });
+                setFormData({
+                    name: authUser.name || '',
+                    phone: authUser.phone || '',
+                    address: authUser.address || '',
+                    date_of_birth: '',
+                    gender: '',
+                });
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            setSaving(true);
+            await api.patient.updateProfile(formData);
+            toast.success('Profile updated successfully!');
+            await fetchProfile();
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to update profile');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const getInitials = (name: string) => {
+        if (!name) return 'U';
+        const parts = name.split(' ');
+        if (parts.length >= 2) {
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+        return name.substring(0, 2).toUpperCase();
+    };
+
+    if (loading) {
+        return (
+            <div className="max-w-4xl mx-auto">
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-slate-500 dark:text-slate-400">Loading profile...</div>
+                </div>
+            </div>
+        );
+    }
+
+    const displayProfile = profile || authUser;
+    if (!displayProfile) {
+        return (
+            <div className="max-w-4xl mx-auto">
+                <div className="text-center text-slate-500 dark:text-slate-400">No profile data available</div>
+            </div>
+        );
+    }
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -10,13 +119,17 @@ const PatientProfile = () => {
 
             {/* Profile Header */}
             <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 mb-8 flex items-center gap-6">
-                <div className="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-3xl">
-                    JD
+                <div className="w-24 h-24 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-3xl overflow-hidden">
+                    {(displayProfile as any).profile_image ? (
+                        <img src={(displayProfile as any).profile_image} alt={displayProfile.name} className="w-full h-full object-cover" />
+                    ) : (
+                        getInitials(displayProfile.name)
+                    )}
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">John Doe</h2>
-                    <p className="text-slate-500 dark:text-slate-400">Patient ID: #12345</p>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">john.doe@example.com</p>
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{displayProfile.name}</h2>
+                    <p className="text-slate-500 dark:text-slate-400">Patient ID: #{displayProfile.user_id?.slice(-6) || 'N/A'}</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{displayProfile.email}</p>
                 </div>
             </div>
 
@@ -27,18 +140,61 @@ const PatientProfile = () => {
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
-                            <input type="text" defaultValue="John Doe" className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                            <input 
+                                type="text" 
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                            />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
-                            <input type="text" defaultValue="+1 (555) 123-4567" className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                            <input 
+                                type="tel" 
+                                value={formData.phone}
+                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                placeholder="Enter phone number"
+                                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                            />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
-                            <input type="text" defaultValue="123 Main St, Springfield, IL" className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
+                            <input 
+                                type="text" 
+                                value={formData.address}
+                                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                placeholder="Enter address"
+                                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                            />
                         </div>
-                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition-colors mt-2">
-                            Save Changes
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Date of Birth</label>
+                            <input 
+                                type="date" 
+                                value={formData.date_of_birth}
+                                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Gender</label>
+                            <select 
+                                value={formData.gender}
+                                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                            >
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <button 
+                            onClick={handleSave}
+                            disabled={saving}
+                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2 rounded-lg font-semibold transition-colors mt-2"
+                        >
+                            {saving ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>
                 </div>

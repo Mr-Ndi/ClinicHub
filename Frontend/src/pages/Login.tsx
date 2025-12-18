@@ -1,38 +1,78 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock login - bypass authentication
-        navigate('/doctor/dashboard');
+        setIsLoading(true);
+
+        try {
+            const response = await fetch('http://127.0.0.1:2739/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                login(data.access_token, data.profile);
+                toast.success('Login successful! Welcome back.');
+
+                // Redirect based on role
+                if (data.profile.role === 'admin') {
+                    navigate('/admin/dashboard');
+                } else if (data.profile.role === 'doctor') {
+                    navigate('/doctor/dashboard');
+                } else {
+                    navigate('/patient/dashboard');
+                }
+            } else {
+                toast.error(data.message || 'Login failed. Please check your credentials.');
+            }
+        } catch (err) {
+            toast.error('An error occurred. Please try again later.');
+            console.error('Login error:', err);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 pt-24">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 pt-24 transition-colors duration-300">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center">
                     <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
                         <span className="text-white font-bold text-2xl">C</span>
                     </div>
                 </div>
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
+                <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900 dark:text-white">
                     Sign in to your account
                 </h2>
-                <p className="mt-2 text-center text-sm text-slate-600">
+                <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
                     Or{' '}
-                    <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+                    <Link to="/signup" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
                         create a new account
                     </Link>
                 </p>
             </div>
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow-xl rounded-2xl sm:px-10 border border-slate-100">
+                <div className="bg-white dark:bg-slate-900 py-8 px-4 shadow-xl rounded-2xl sm:px-10 border border-slate-100 dark:border-slate-800">
                     <form className="space-y-6" onSubmit={handleLogin}>
+
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+                            <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                                 Email address
                             </label>
                             <div className="mt-1">
@@ -42,13 +82,15 @@ const Login = () => {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className="appearance-none block w-full px-3 py-3 border border-slate-300 rounded-xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="appearance-none block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+                            <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                                 Password
                             </label>
                             <div className="mt-1">
@@ -58,7 +100,9 @@ const Login = () => {
                                     type="password"
                                     autoComplete="current-password"
                                     required
-                                    className="appearance-none block w-full px-3 py-3 border border-slate-300 rounded-xl shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="appearance-none block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
                                 />
                             </div>
                         </div>
@@ -69,15 +113,15 @@ const Login = () => {
                                     id="remember-me"
                                     name="remember-me"
                                     type="checkbox"
-                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700 rounded"
                                 />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-900">
+                                <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-900 dark:text-white">
                                     Remember me
                                 </label>
                             </div>
 
                             <div className="text-sm">
-                                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                                <a href="#" className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
                                     Forgot your password?
                                 </a>
                             </div>
@@ -86,40 +130,53 @@ const Login = () => {
                         <div>
                             <button
                                 type="submit"
-                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all shadow-blue-600/20"
+                                disabled={isLoading}
+                                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all shadow-blue-600/20 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
                             >
-                                Sign in
+                                {isLoading ? 'Signing in...' : 'Sign in'}
                             </button>
                         </div>
                     </form>
 
-                    <div className="mt-6 pt-6 border-t border-slate-100 text-center">
-                        <p className="text-slate-500 mb-4">For Demo Purposes:</p>
+                    <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
+                        <p className="text-slate-500 dark:text-slate-400 mb-4">For Demo Purposes:</p>
                         <div className="flex gap-4 justify-center">
-                            <Link to="/doctor/dashboard" className="text-sm font-semibold text-blue-600 hover:underline">
+                            <button
+                                onClick={() => {
+                                    setEmail('doctor@clinichub.com');
+                                    setPassword('Doctor#123');
+                                }}
+                                className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                            >
                                 Doctor Login
-                            </Link>
-                            <span className="text-slate-300">|</span>
-                            <Link to="/patient/dashboard" className="text-sm font-semibold text-green-600 hover:underline">
+                            </button>
+                            <span className="text-slate-300 dark:text-slate-700">|</span>
+                            <button
+                                onClick={() => {
+                                    setEmail('patient@clinichub.com');
+                                    setPassword('Patient#123');
+                                }}
+                                className="text-sm font-semibold text-green-600 dark:text-green-400 hover:underline"
+                            >
                                 Patient Login
-                            </Link>
+                            </button>
                         </div>
                     </div>
 
                     <div className="mt-6">
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-slate-300" />
+                                <div className="w-full border-t border-slate-300 dark:border-slate-700" />
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className="px-2 bg-white text-slate-500">Or continue with</span>
+                                <span className="px-2 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400">Or continue with</span>
                             </div>
                         </div>
 
                         <div className="mt-6">
                             <button
                                 type="button"
-                                className="w-full flex justify-center items-center gap-3 py-3 px-4 border border-slate-300 rounded-xl shadow-sm bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
+                                className="w-full flex justify-center items-center gap-3 py-3 px-4 border border-slate-300 dark:border-slate-700 rounded-xl shadow-sm bg-white dark:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all"
                             >
                                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                                     <path

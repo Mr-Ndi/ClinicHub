@@ -1,17 +1,48 @@
-const AdminDashboardHome = () => {
-    const stats = [
-        { label: 'Total Doctors', value: '24', change: '+2', color: 'bg-blue-500' },
-        { label: 'Total Patients', value: '1,234', change: '+12%', color: 'bg-green-500' },
-        { label: 'Appointments Today', value: '156', change: '+5%', color: 'bg-amber-500' },
-        { label: 'Total Revenue', value: '$45k', change: '+8%', color: 'bg-purple-500' },
-    ];
+import { useState, useEffect } from 'react';
+import { api } from '../../services/api';
+import toast from 'react-hot-toast';
 
-    const recentActivity = [
-        { user: 'Dr. Sarah Johnson', action: 'Joined the clinic', time: '2 days ago' },
-        { user: 'Dr. Mike Ross', action: 'Updated profile', time: '5 hours ago' },
-        { user: 'Admin', action: 'System maintenance', time: '1 day ago' },
-        { user: 'New Patient', action: 'Registration spike', time: 'Today' },
-    ];
+const AdminDashboardHome = () => {
+    const [stats, setStats] = useState([
+        { label: 'Total Doctors', value: '0', change: '+0', color: 'bg-blue-500' },
+        { label: 'Total Patients', value: '0', change: '+0', color: 'bg-green-500' },
+        { label: 'Appointments Today', value: '0', change: '+0', color: 'bg-amber-500' },
+        { label: 'Total Revenue', value: '$0', change: '+0%', color: 'bg-purple-500' },
+    ]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const [doctors, patients, appointments] = await Promise.all([
+                    api.admin.getDoctors(),
+                    api.admin.getPatients(),
+                    api.admin.getAllAppointments().catch(() => []) // Return empty array if endpoint fails
+                ]);
+
+                const today = new Date().toISOString().split('T')[0];
+                const appointmentsToday = Array.isArray(appointments) 
+                    ? appointments.filter((app: any) => app.appointment_date?.startsWith(today)).length 
+                    : 0;
+
+                setStats([
+                    { label: 'Total Doctors', value: doctors.length.toString(), change: '+0', color: 'bg-blue-500' },
+                    { label: 'Total Patients', value: patients.length.toString(), change: '+0', color: 'bg-green-500' },
+                    { label: 'Appointments Today', value: appointmentsToday.toString(), change: '+0', color: 'bg-amber-500' },
+                    { label: 'Total Revenue', value: '$0', change: '+0%', color: 'bg-purple-500' }, // Revenue logic not implemented yet
+                ]);
+            } catch (error) {
+                console.error('Failed to fetch dashboard stats', error);
+                toast.error('Failed to load dashboard statistics');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchStats();
+    }, []);
+
+    const [recentActivity] = useState<Array<{ user: string; action: string; time: string }>>([]);
 
     return (
         <div>
@@ -28,11 +59,9 @@ const AdminDashboardHome = () => {
                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white ${stat.color} bg-opacity-90`}>
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                             </div>
-                            <span className={`text-sm font-semibold ${stat.change.startsWith('+') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                                {stat.change}
-                            </span>
+                            {/* Change indicator removed as we don't have historical data yet */}
                         </div>
-                        <h3 className="text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</h3>
+                        <h3 className="text-3xl font-bold text-slate-900 dark:text-white">{isLoading ? '...' : stat.value}</h3>
                         <p className="text-slate-500 dark:text-slate-400 text-sm">{stat.label}</p>
                     </div>
                 ))}
@@ -43,18 +72,24 @@ const AdminDashboardHome = () => {
                 <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
                     <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6">System Activity</h2>
                     <div className="space-y-6">
-                        {recentActivity.map((item, index) => (
-                            <div key={index} className="flex items-start gap-4 pb-6 border-b border-slate-50 dark:border-slate-800 last:border-0 last:pb-0">
-                                <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold flex-shrink-0">
-                                    {item.user[0]}
+                        {recentActivity.length > 0 ? (
+                            recentActivity.map((item, index) => (
+                                <div key={index} className="flex items-start gap-4 pb-6 border-b border-slate-50 dark:border-slate-800 last:border-0 last:pb-0">
+                                    <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold flex-shrink-0">
+                                        {item.user[0]}
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-900 dark:text-white font-medium">{item.user}</p>
+                                        <p className="text-slate-500 dark:text-slate-400 text-sm">{item.action}</p>
+                                    </div>
+                                    <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">{item.time}</span>
                                 </div>
-                                <div>
-                                    <p className="text-slate-900 dark:text-white font-medium">{item.user}</p>
-                                    <p className="text-slate-500 dark:text-slate-400 text-sm">{item.action}</p>
-                                </div>
-                                <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">{item.time}</span>
+                            ))
+                        ) : (
+                            <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                                <p>No recent activity</p>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
 

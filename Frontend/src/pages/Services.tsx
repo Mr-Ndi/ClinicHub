@@ -59,28 +59,28 @@ const Services = () => {
     ];
 
     return (
-        <div className="bg-slate-50 min-h-screen pt-24 pb-12">
+        <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-24 pb-12 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
-                    <h1 className="text-4xl font-extrabold text-slate-900 sm:text-5xl">
+                    <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white sm:text-5xl">
                         Our Medical <span className="text-blue-600">Services</span>
                     </h1>
-                    <p className="mt-4 text-xl text-slate-600 max-w-2xl mx-auto">
+                    <p className="mt-4 text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
                         We offer a wide range of specialized medical services to ensure the best care for you and your family.
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {services.map((service, index) => (
-                        <div key={index} className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 border border-slate-100">
-                            <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6">
+                        <div key={index} className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300 border border-slate-100 dark:border-slate-800">
+                            <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mb-6">
                                 {service.icon}
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-3">{service.title}</h3>
-                            <p className="text-slate-600 mb-6 leading-relaxed">
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{service.title}</h3>
+                            <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
                                 {service.description}
                             </p>
-                            <a href="#" className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700 transition-colors">
+                            <a href="#" className="inline-flex items-center text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
                                 Learn More
                                 <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />

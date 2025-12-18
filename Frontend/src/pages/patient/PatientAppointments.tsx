@@ -1,10 +1,27 @@
+import { useState, useEffect } from 'react';
+import { api } from '../../services/api';
+import toast from 'react-hot-toast';
 
 const PatientAppointments = () => {
-    const appointments = [
-        { id: 1, doctor: 'Dr. Sarah Johnson', specialty: 'Cardiologist', date: 'Dec 18, 2025', time: '10:00 AM', status: 'Upcoming', type: 'Checkup' },
-        { id: 2, doctor: 'Dr. Michael Chen', specialty: 'Dermatologist', date: 'Dec 22, 2025', time: '02:30 PM', status: 'Upcoming', type: 'Consultation' },
-        { id: 3, doctor: 'Dr. James Wilson', specialty: 'General Practitioner', date: 'Nov 15, 2025', time: '09:00 AM', status: 'Completed', type: 'Follow-up' },
-    ];
+    const [appointments, setAppointments] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        fetchAppointments();
+    }, []);
+
+    const fetchAppointments = async () => {
+        try {
+            setIsLoading(true);
+            const data = await api.patient.getAppointments();
+            setAppointments(Array.isArray(data) ? data : []);
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to load appointments');
+            setAppointments([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div>
@@ -34,42 +51,63 @@ const PatientAppointments = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-800">
-                        {appointments.map((apt) => (
-                            <tr key={apt.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        <div className="flex-shrink-0 h-10 w-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
-                                            {apt.doctor[4]}
-                                        </div>
-                                        <div className="ml-4">
-                                            <div className="text-sm font-medium text-slate-900 dark:text-white">{apt.doctor}</div>
-                                            <div className="text-sm text-slate-500 dark:text-slate-400">{apt.specialty}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-slate-900 dark:text-white">{apt.date}</div>
-                                    <div className="text-sm text-slate-500 dark:text-slate-400">{apt.time}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
-                                    {apt.type}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        ${apt.status === 'Upcoming' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'}`}>
-                                        {apt.status}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    {apt.status === 'Upcoming' && (
-                                        <button className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Cancel</button>
-                                    )}
-                                    {apt.status === 'Completed' && (
-                                        <button className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">View Summary</button>
-                                    )}
+                        {isLoading ? (
+                            <tr>
+                                <td colSpan={5} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                                    Loading appointments...
                                 </td>
                             </tr>
-                        ))}
+                        ) : appointments.length > 0 ? (
+                            appointments.map((apt) => {
+                                const doctorName = apt.doctor_name || apt.doctor || 'Doctor';
+                                const appointmentDate = apt.appointment_date ? new Date(apt.appointment_date).toLocaleDateString() : 'TBD';
+                                const appointmentTime = apt.appointment_time || apt.time || 'TBD';
+                                const status = apt.status || 'Pending';
+                                return (
+                                    <tr key={apt.appointment_id || apt.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <div className="flex-shrink-0 h-10 w-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
+                                                    {doctorName[0] || 'D'}
+                                                </div>
+                                                <div className="ml-4">
+                                                    <div className="text-sm font-medium text-slate-900 dark:text-white">{doctorName}</div>
+                                                    <div className="text-sm text-slate-500 dark:text-slate-400 capitalize">{apt.specialty || apt.specialization || 'General'}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-slate-900 dark:text-white">{appointmentDate}</div>
+                                            <div className="text-sm text-slate-500 dark:text-slate-400">{appointmentTime}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400 capitalize">
+                                            {apt.appointment_type || apt.type || 'Consultation'}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                ${status.toLowerCase() === 'upcoming' || status.toLowerCase() === 'confirmed' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' : 
+                                                status.toLowerCase() === 'completed' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' :
+                                                'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400'}`}>
+                                                {status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            {status.toLowerCase() === 'upcoming' || status.toLowerCase() === 'confirmed' ? (
+                                                <button className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Cancel</button>
+                                            ) : status.toLowerCase() === 'completed' ? (
+                                                <button className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">View Summary</button>
+                                            ) : null}
+                                        </td>
+                                    </tr>
+                                );
+                            })
+                        ) : (
+                            <tr>
+                                <td colSpan={5} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                                    No appointments found
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

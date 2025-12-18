@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 const PatientDashboardLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const location = useLocation();
-    const { } = useTheme();
+    const { theme, toggleTheme } = useTheme();
+    const { user } = useAuth();
 
     const menuItems = [
         { path: '/patient/dashboard', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z', label: 'Dashboard' },
@@ -65,13 +67,28 @@ const PatientDashboardLayout = () => {
                     </button>
 
                     <div className="flex items-center gap-4">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-500 dark:text-slate-400 transition-colors"
+                            aria-label="Toggle theme"
+                        >
+                            {theme === 'dark' ? (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            ) : (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                </svg>
+                            )}
+                        </button>
                         <Link to="/patient/profile" className="flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded-xl transition-colors group">
                             <div className="text-right hidden sm:block">
-                                <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">John Doe</p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">Patient ID: #12345</p>
+                                <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{user?.name || 'Patient'}</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">Patient ID: #{user?.user_id?.slice(-6) || 'N/A'}</p>
                             </div>
                             <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
-                                JD
+                                {user?.name ? user.name.substring(0, 2).toUpperCase() : 'P'}
                             </div>
                         </Link>
                         <Link to="/" className="text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-2">

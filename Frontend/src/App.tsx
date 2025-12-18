@@ -31,113 +31,125 @@ import AdminDashboardLayout from './layouts/AdminDashboardLayout';
 import AdminDashboardHome from './pages/admin/AdminDashboardHome';
 import DoctorManagement from './pages/admin/DoctorManagement';
 import PatientManagement from './pages/admin/PatientManagement';
+import StockManagement from './pages/admin/StockManagement';
 import AdminSettings from './pages/admin/AdminSettings';
 import PatientProfileAdmin from './pages/admin/PatientProfileAdmin';
 import AdminProfile from './pages/admin/AdminProfile';
+import { AuthProvider } from './context/AuthContext';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={
-          <div className="min-h-screen flex flex-col font-sans text-slate-900 bg-white">
-            <Navbar />
-            <main className="flex-grow">
-              <Home />
-            </main>
-            <Footer />
-          </div>
-        } />
-        <Route path="/services" element={
-          <div className="min-h-screen flex flex-col font-sans text-slate-900 bg-white">
-            <Navbar />
-            <main className="flex-grow">
-              <Services />
-            </main>
-            <Footer />
-          </div>
-        } />
-        <Route path="/about" element={
-          <div className="min-h-screen flex flex-col font-sans text-slate-900 bg-white">
-            <Navbar />
-            <main className="flex-grow">
-              <About />
-            </main>
-            <Footer />
-          </div>
-        } />
-        <Route path="/doctors" element={
-          <div className="min-h-screen flex flex-col font-sans text-slate-900 bg-white">
-            <Navbar />
-            <main className="flex-grow">
-              <Doctors />
-            </main>
-            <Footer />
-          </div>
-        } />
-        <Route path="/contact" element={
-          <div className="min-h-screen flex flex-col font-sans text-slate-900 bg-white">
-            <Navbar />
-            <main className="flex-grow">
-              <Contact />
-            </main>
-            <Footer />
-          </div>
-        } />
-        <Route path="/login" element={
-          <div className="min-h-screen flex flex-col font-sans text-slate-900 bg-white">
-            <Navbar />
-            <main className="flex-grow">
-              <Login />
-            </main>
-            <Footer />
-          </div>
-        } />
-        <Route path="/signup" element={
-          <div className="min-h-screen flex flex-col font-sans text-slate-900 bg-white">
-            <Navbar />
-            <main className="flex-grow">
-              <Signup />
-            </main>
-            <Footer />
-          </div>
-        } />
+    <AuthProvider>
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          className: 'dark:bg-slate-800 dark:text-white',
+        }}
+      />
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={
+            <div className="min-h-screen flex flex-col font-sans text-slate-900 dark:text-white bg-white dark:bg-slate-950 transition-colors duration-300">
+              <Navbar />
+              <main className="flex-grow">
+                <Home />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/services" element={
+            <div className="min-h-screen flex flex-col font-sans text-slate-900 dark:text-white bg-white dark:bg-slate-950 transition-colors duration-300">
+              <Navbar />
+              <main className="flex-grow">
+                <Services />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/about" element={
+            <div className="min-h-screen flex flex-col font-sans text-slate-900 dark:text-white bg-white dark:bg-slate-950 transition-colors duration-300">
+              <Navbar />
+              <main className="flex-grow">
+                <About />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/doctors" element={
+            <div className="min-h-screen flex flex-col font-sans text-slate-900 dark:text-white bg-white dark:bg-slate-950 transition-colors duration-300">
+              <Navbar />
+              <main className="flex-grow">
+                <Doctors />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/contact" element={
+            <div className="min-h-screen flex flex-col font-sans text-slate-900 dark:text-white bg-white dark:bg-slate-950 transition-colors duration-300">
+              <Navbar />
+              <main className="flex-grow">
+                <Contact />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/login" element={
+            <div className="min-h-screen flex flex-col font-sans text-slate-900 dark:text-white bg-white dark:bg-slate-950 transition-colors duration-300">
+              <Navbar />
+              <main className="flex-grow">
+                <Login />
+              </main>
+              <Footer />
+            </div>
+          } />
+          <Route path="/signup" element={
+            <div className="min-h-screen flex flex-col font-sans text-slate-900 dark:text-white bg-white dark:bg-slate-950 transition-colors duration-300">
+              <Navbar />
+              <main className="flex-grow">
+                <Signup />
+              </main>
+              <Footer />
+            </div>
+          } />
 
-        {/* Doctor Dashboard Routes */}
-        <Route path="/doctor" element={<DashboardLayout />}>
-          <Route path="dashboard" element={<DashboardHome />} />
-          <Route path="appointments" element={<Appointments />} />
-          <Route path="patients" element={<Patients />} />
-          <Route path="patients/:id" element={<PatientProfileDoctor />} />
-          <Route path="prescriptions" element={<Prescriptions />} />
-          <Route path="records" element={<MedicalRecords />} />
-          <Route path="telemedicine" element={<Telemedicine />} />
-          <Route path="profile" element={<Profile />} />
-        </Route>
+          {/* Doctor Dashboard Routes */}
+          <Route path="/doctor" element={<DashboardLayout />}>
+            <Route path="dashboard" element={<DashboardHome />} />
+            <Route path="appointments" element={<Appointments />} />
+            <Route path="patients" element={<Patients />} />
+            <Route path="patients/:id" element={<PatientProfileDoctor />} />
+            <Route path="prescriptions" element={<Prescriptions />} />
+            <Route path="records" element={<MedicalRecords />} />
+            <Route path="telemedicine" element={<Telemedicine />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
 
-        {/* Patient Dashboard Routes */}
-        <Route path="/patient" element={<PatientDashboardLayout />}>
-          <Route path="dashboard" element={<PatientDashboardHome />} />
-          <Route path="appointments" element={<PatientAppointments />} />
-          <Route path="records" element={<PatientMedicalRecords />} />
-          <Route path="prescriptions" element={<PatientPrescriptions />} />
-          <Route path="billing" element={<PatientBilling />} />
-          <Route path="telemedicine" element={<PatientTelemedicine />} />
-          <Route path="profile" element={<PatientProfilePatient />} />
-        </Route>
+          {/* Patient Dashboard Routes */}
+          <Route path="/patient" element={<PatientDashboardLayout />}>
+            <Route path="dashboard" element={<PatientDashboardHome />} />
+            <Route path="appointments" element={<PatientAppointments />} />
+            <Route path="records" element={<PatientMedicalRecords />} />
+            <Route path="prescriptions" element={<PatientPrescriptions />} />
+            <Route path="billing" element={<PatientBilling />} />
+            <Route path="telemedicine" element={<PatientTelemedicine />} />
+            <Route path="profile" element={<PatientProfilePatient />} />
+          </Route>
 
-        {/* Admin Dashboard Routes */}
-        <Route path="/admin" element={<AdminDashboardLayout />}>
-          <Route path="dashboard" element={<AdminDashboardHome />} />
-          <Route path="doctors" element={<DoctorManagement />} />
-          <Route path="patients" element={<PatientManagement />} />
-          <Route path="patients/:id" element={<PatientProfileAdmin />} />
-          <Route path="settings" element={<AdminSettings />} />
-          <Route path="profile" element={<AdminProfile />} />
-        </Route>
-      </Routes>
-    </Router>
+          {/* Admin Dashboard Routes */}
+          <Route path="/admin" element={<AdminDashboardLayout />}>
+            <Route path="dashboard" element={<AdminDashboardHome />} />
+            <Route path="doctors" element={<DoctorManagement />} />
+            <Route path="patients" element={<PatientManagement />} />
+            <Route path="patients/:id" element={<PatientProfileAdmin />} />
+            <Route path="stock" element={<StockManagement />} />
+            <Route path="settings" element={<AdminSettings />} />
+            <Route path="profile" element={<AdminProfile />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

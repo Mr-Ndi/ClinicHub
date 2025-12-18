@@ -11,14 +11,27 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [theme, setTheme] = useState<Theme>(() => {
+        // Check localStorage first, default to light
+        if (typeof window !== 'undefined') {
         const savedTheme = localStorage.getItem('theme');
-        return (savedTheme as Theme) || 'light';
+            // Only accept valid theme values
+            if (savedTheme === 'light' || savedTheme === 'dark') {
+                return savedTheme as Theme;
+            }
+            // If invalid or missing, set to light
+            localStorage.setItem('theme', 'light');
+            return 'light';
+        }
+        return 'light';
     });
 
     useEffect(() => {
         const root = window.document.documentElement;
+        // Remove both classes first
         root.classList.remove('light', 'dark');
+        // Add the current theme class
         root.classList.add(theme);
+        // Save to localStorage
         localStorage.setItem('theme', theme);
     }, [theme]);
 
