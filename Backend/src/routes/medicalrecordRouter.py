@@ -9,7 +9,7 @@ from src.Controllers.medicalrecordController import (
 )
 from src.Utils.db import get_db
 
-medicalrecordRouter = APIRouter(prefix="/api/medical-records", tags=["MedicalRecords"])
+medicalrecordRouter = APIRouter(prefix="/api/medicalrecord", tags=["MedicalRecords"])
 
 @medicalrecordRouter.post("/", status_code=status.HTTP_201_CREATED)
 def create_medicalrecord(record: dict = Body(...), db: Session = Depends(get_db)):

@@ -2,6 +2,8 @@
 from src.Models.appointmentmodel import Appointment
 from uuid import uuid4
 from datetime import datetime
+from sqlalchemy.exc import SQLAlchemyError, OperationalError, IntegrityError, ProgrammingError
+from fastapi import HTTPException, status
 
 def create_appointment(db, appointment: dict):
 	appt = Appointment(
@@ -41,4 +43,34 @@ def delete_appointment(db, appointment_id: str):
 	return appt
 
 def list_appointments(db):
-	return db.query(Appointment).all()
+	try:
+		return db.query(Appointment).all()
+	except (OperationalError, ProgrammingError) as e:
+		# Catch both OperationalError and ProgrammingError (which includes UndefinedTable)
+		error_msg = str(e.orig) if hasattr(e, 'orig') else str(e)
+		print(f"Database error in list_appointments: {error_msg}")  # Debug log
+		if "relation" in error_msg.lower() and "does not exist" in error_msg.lower():
+			raise HTTPException(
+				status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+				detail="Database table 'appointments' does not exist. Please run the database setup script or contact the administrator."
+			)
+		else:
+			raise HTTPException(
+				status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+				detail=f"Database error while fetching appointments: {error_msg}. Please contact support."
+			)
+	except SQLAlchemyError as e:
+		error_msg = str(e.orig) if hasattr(e, 'orig') else str(e)
+		print(f"SQLAlchemyError in list_appointments: {error_msg}")  # Debug log
+		raise HTTPException(
+			status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			detail="Failed to retrieve appointments. Please try again later."
+		)
+	except Exception as e:
+		import traceback
+		print(f"Unexpected error in list_appointments: {type(e).__name__}: {str(e)}")
+		print(traceback.format_exc())  # Debug log
+		raise HTTPException(
+			status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			detail=f"An unexpected error occurred while fetching appointments: {str(e)}"
+		)

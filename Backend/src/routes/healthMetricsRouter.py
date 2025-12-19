@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Body, status
 from sqlalchemy.orm import Session
 from src.Utils.db import get_db
 
-healthMetricsRouter = APIRouter(prefix="/api/patient/health-metrics", tags=["HealthMetrics"])
+healthMetricsRouter = APIRouter(prefix="/api/health-metrics", tags=["HealthMetrics"])
 
 # Example: Store health metrics (e.g., from wearable or manual entry)
 @healthMetricsRouter.post("/", status_code=status.HTTP_201_CREATED)

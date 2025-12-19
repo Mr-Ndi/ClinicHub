@@ -13,7 +13,10 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 def require_admin(user=Depends(get_current_user)):
     if user.get("role") != "admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admins only")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Access denied. Only administrators can perform this action."
+        )
     return user
 
 def require_admin_or_doctor(user=Depends(get_current_user)):

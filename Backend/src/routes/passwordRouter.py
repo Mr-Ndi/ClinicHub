@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.Controllers.passwordController import set_new_password_controller
 from src.Utils.db import get_db
 
-passwordRouter = APIRouter(prefix="/api/user", tags=["Password"])
+passwordRouter = APIRouter(prefix="/api/password", tags=["Password"])
 
 @passwordRouter.post("/set-password", status_code=status.HTTP_200_OK)
 def set_new_password(

@@ -1,5 +1,5 @@
 
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from src.Services.appointmentservices import (
 	create_appointment,
@@ -34,4 +34,15 @@ def delete_appointment_controller(db: Session, appointment_id: str):
 	return {"message": "Appointment deleted"}
 
 def list_appointments_controller(db: Session):
-	return list_appointments(db)
+	try:
+		return list_appointments(db)
+	except HTTPException:
+		raise
+	except Exception as e:
+		import traceback
+		print(f"Unexpected error in list_appointments_controller: {type(e).__name__}: {str(e)}")
+		print(traceback.format_exc())
+		raise HTTPException(
+			status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			detail=f"Failed to retrieve appointments: {str(e)}"
+		)

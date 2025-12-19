@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 import uuid
 
-Base = declarative_base()
+from src.Models.usermodel import Base
 
 class Billing(Base):
     __tablename__ = "billings"

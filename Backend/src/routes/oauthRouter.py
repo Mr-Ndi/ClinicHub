@@ -4,7 +4,7 @@ from src.Middlewares.userpydanticmodel import UserOAuthRegister
 from src.Controllers.oauthController import oauth_login_controller
 from src.Utils.db import get_db
 
-oauthRouter = APIRouter(prefix="/api/auth", tags=["OAuth"])
+oauthRouter = APIRouter(prefix="/api/oauth", tags=["OAuth"])
 
 @oauthRouter.post("/oauth-login", status_code=status.HTTP_200_OK)
 def oauth_login(
