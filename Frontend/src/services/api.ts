@@ -1,10 +1,13 @@
-const API_URL = 'http://127.0.0.1:2739/api';
+const API_URL = 'http://localhost:2739/api';
 
-const getHeaders = () => {
+const getHeaders = (includeContentType: boolean = true) => {
     const token = localStorage.getItem('access_token');
-    const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-    };
+    const headers: Record<string, string> = {};
+    
+    // Only include Content-Type for requests with a body
+    if (includeContentType) {
+        headers['Content-Type'] = 'application/json';
+    }
     
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -17,7 +20,8 @@ const handleResponse = async (response: Response) => {
     if (!response.ok) {
         let error: any;
         try {
-            error = await response.json();
+            const text = await response.text();
+            error = JSON.parse(text);
         } catch (e) {
             // If response is not JSON, create a generic error object
             error = { detail: `HTTP ${response.status}: ${response.statusText}` };
@@ -43,7 +47,13 @@ const handleResponse = async (response: Response) => {
         // For 400 errors, show the detail message
         throw new Error(errorMessage);
     }
-    return response.json();
+    
+    try {
+        const data = await response.json();
+        return data;
+    } catch (e) {
+        throw new Error('Invalid response format from server');
+    }
 };
 
 export const api = {
@@ -69,7 +79,7 @@ export const api = {
     patient: {
         getAppointments: async () => {
             const response = await fetch(`${API_URL}/patient/appointments`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
@@ -83,19 +93,19 @@ export const api = {
         },
         getPrescriptions: async () => {
             const response = await fetch(`${API_URL}/patient/prescriptions`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
         getRecords: async () => {
             const response = await fetch(`${API_URL}/patient/records`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
         getProfile: async () => {
             const response = await fetch(`${API_URL}/patient/profile`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
@@ -113,7 +123,7 @@ export const api = {
     doctor: {
         getAppointments: async () => {
             const response = await fetch(`${API_URL}/doctor/appointments`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
@@ -127,19 +137,19 @@ export const api = {
         },
         getPatients: async () => {
             const response = await fetch(`${API_URL}/doctor/patients`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
         getPatientDetails: async (id: string) => {
             const response = await fetch(`${API_URL}/doctor/patients/${id}`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
         getPrescriptions: async () => {
             const response = await fetch(`${API_URL}/doctor/prescriptions`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
@@ -153,7 +163,7 @@ export const api = {
         },
         getPatientRecords: async (id: string) => {
             const response = await fetch(`${API_URL}/doctor/patients/${id}/records`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
@@ -167,7 +177,7 @@ export const api = {
         },
         getProfile: async () => {
             const response = await fetch(`${API_URL}/doctor/profile`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
@@ -179,20 +189,39 @@ export const api = {
             });
             return handleResponse(response);
         },
+        getDashboardData: async () => {
+            const response = await fetch(`${API_URL}/dashboard/doctor/data`, {
+                headers: getHeaders(false),
+            });
+            return handleResponse(response);
+        },
     },
 
     // Admin
     admin: {
         getDoctors: async () => {
-            const response = await fetch(`${API_URL}/admin/doctors`, {
-                headers: getHeaders(),
-            });
-            return handleResponse(response);
+            try {
+                const headers = getHeaders(false); // Don't include Content-Type for GET
+                
+                const response = await fetch(`${API_URL}/admin/doctors`, {
+                    method: 'GET',
+                    headers: headers,
+                    mode: 'cors',
+                });
+                
+                return handleResponse(response);
+            } catch (error: any) {
+                // If it's a network error, provide a more helpful message
+                if (error.message?.includes('NetworkError') || error.message?.includes('Failed to fetch') || error.name === 'TypeError') {
+                    throw new Error('Network error: Unable to connect to the server. Please check if the backend is running at http://localhost:2739');
+                }
+                throw error;
+            }
         },
 
         getDashboardData: async () => {
-            const response = await fetch(`${API_URL}/admin/dashboard/data`, {
-                headers: getHeaders(),
+            const response = await fetch(`${API_URL}/dashboard/data`, {
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
@@ -220,10 +249,22 @@ export const api = {
             return handleResponse(response);
         },
         getPatients: async () => {
-            const response = await fetch(`${API_URL}/admin/patients`, {
-                headers: getHeaders(),
-            });
-            return handleResponse(response);
+            try {
+                const headers = getHeaders(false); // Don't include Content-Type for GET
+                
+                const response = await fetch(`${API_URL}/admin/patients`, {
+                    method: 'GET',
+                    headers: headers,
+                    mode: 'cors',
+                });
+                
+                return handleResponse(response);
+            } catch (error: any) {
+                if (error.message?.includes('NetworkError') || error.message?.includes('Failed to fetch') || error.name === 'TypeError') {
+                    throw new Error('Network error: Unable to connect to the server. Please check if the backend is running at http://localhost:2739');
+                }
+                throw error;
+            }
         },
         addPatient: async (data: any) => {
             const response = await fetch(`${API_URL}/admin/patients`, {
@@ -249,10 +290,22 @@ export const api = {
             return handleResponse(response);
         },
         getAllAppointments: async () => {
-            const response = await fetch(`${API_URL}/admin/appointments`, {
-                headers: getHeaders(),
-            });
-            return handleResponse(response);
+            try {
+                const headers = getHeaders(false); // Don't include Content-Type for GET
+                
+                const response = await fetch(`${API_URL}/admin/appointments`, {
+                    method: 'GET',
+                    headers: headers,
+                    mode: 'cors',
+                });
+                
+                return handleResponse(response);
+            } catch (error: any) {
+                if (error.message?.includes('NetworkError') || error.message?.includes('Failed to fetch') || error.name === 'TypeError') {
+                    throw new Error('Network error: Unable to connect to the server. Please check if the backend is running at http://localhost:2739');
+                }
+                throw error;
+            }
         },
         updateAppointmentStatus: async (id: string, status: string) => {
             const response = await fetch(`${API_URL}/admin/appointments/update-status`, {
@@ -264,7 +317,7 @@ export const api = {
         },
         getProfile: async () => {
             const response = await fetch(`${API_URL}/admin/profile`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
@@ -279,24 +332,16 @@ export const api = {
         // Stock Management
         getStockItems: async () => {
             const response = await fetch(`${API_URL}/stock`, {
-                headers: getHeaders(),
+                headers: getHeaders(false),
             });
             return handleResponse(response);
         },
         addStockItem: async (data: any) => {
-            console.log('📤 API Request - POST /api/stock');
-            console.log('📤 Request Body:', JSON.stringify(data, null, 2));
-            console.log('📤 Request Headers:', getHeaders());
-            
             const response = await fetch(`${API_URL}/stock`, {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify(data),
             });
-            
-            console.log('📥 Response Status:', response.status, response.statusText);
-            const responseData = await response.clone().json().catch(() => ({ error: 'Could not parse response' }));
-            console.log('📥 Response Body:', JSON.stringify(responseData, null, 2));
             
             return handleResponse(response);
         },

@@ -20,27 +20,35 @@ const DashboardHome = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const [patients, appointmentsData] = await Promise.all([
-                    api.doctor.getPatients(),
-                    api.doctor.getAppointments().catch(() => [])
-                ]);
-
+                setIsLoading(true);
+                // Fetch dashboard analytics data
+                const dashboardData = await api.doctor.getDashboardData();
+                
+                // Also fetch appointments for the "Next Appointment" section
+                const appointmentsData = await api.doctor.getAppointments().catch(() => []);
                 setAppointments(Array.isArray(appointmentsData) ? appointmentsData : []);
 
-                const today = new Date().toISOString().split('T')[0];
-                const appointmentsToday = Array.isArray(appointmentsData) 
-                    ? appointmentsData.filter((app: any) => app.appointment_date?.startsWith(today)).length 
-                    : 0;
+                // Format earnings with currency
+                const earningsFormatted = dashboardData.total_earnings 
+                    ? `$${dashboardData.total_earnings.toFixed(2)}` 
+                    : '$0';
 
                 setStats([
-                    { label: 'Total Patients', value: patients.length.toString(), change: '+0%', color: 'bg-blue-500' },
-                    { label: 'Appointments Today', value: appointmentsToday.toString(), change: '+0%', color: 'bg-green-500' },
-                    { label: 'Pending Reports', value: '0', change: '-0%', color: 'bg-amber-500' }, // Logic for reports not implemented
-                    { label: 'Total Earnings', value: '$0', change: '+0%', color: 'bg-purple-500' }, // Logic for earnings not implemented
+                    { label: 'Total Patients', value: dashboardData.total_patients?.toString() || '0', change: '+0%', color: 'bg-blue-500' },
+                    { label: 'Appointments Today', value: dashboardData.appointments_today?.toString() || '0', change: '+0%', color: 'bg-green-500' },
+                    { label: 'Pending Reports', value: dashboardData.pending_reports?.toString() || '0', change: '-0%', color: 'bg-amber-500' },
+                    { label: 'Total Earnings', value: earningsFormatted, change: '+0%', color: 'bg-purple-500' },
                 ]);
             } catch (error) {
                 console.error('Failed to fetch dashboard stats', error);
                 toast.error('Failed to load dashboard statistics');
+                // Fallback to default values on error
+                setStats([
+                    { label: 'Total Patients', value: '0', change: '+0%', color: 'bg-blue-500' },
+                    { label: 'Appointments Today', value: '0', change: '+0%', color: 'bg-green-500' },
+                    { label: 'Pending Reports', value: '0', change: '-0%', color: 'bg-amber-500' },
+                    { label: 'Total Earnings', value: '$0', change: '+0%', color: 'bg-purple-500' },
+                ]);
             } finally {
                 setIsLoading(false);
             }
@@ -50,6 +58,35 @@ const DashboardHome = () => {
     }, []);
 
     const [recentActivity, setRecentActivity] = useState<Array<{ patient: string; action: string; time: string }>>([]);
+    
+    const getTimeAgo = (date: Date): string => {
+        const now = new Date();
+        const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+        
+        if (diffInSeconds < 60) return 'Just now';
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        return date.toLocaleDateString();
+    };
+    
+    useEffect(() => {
+        // Generate recent activity from appointments
+        if (appointments && appointments.length > 0) {
+            const activity = appointments
+                .slice(0, 5)
+                .map((app: any) => {
+                    const date = new Date(app.appointment_date || app.date || Date.now());
+                    const timeAgo = getTimeAgo(date);
+                    return {
+                        patient: app.patient_name || 'Patient',
+                        action: `Appointment - ${app.appointment_type || app.type || 'Consultation'}`,
+                        time: timeAgo
+                    };
+                });
+            setRecentActivity(activity);
+        }
+    }, [appointments]);
 
     return (
         <div>

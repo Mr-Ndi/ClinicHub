@@ -87,8 +87,20 @@ const PatientDashboardLayout = () => {
                                 <p className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{user?.name || 'Patient'}</p>
                                 <p className="text-xs text-slate-500 dark:text-slate-400">Patient ID: #{user?.user_id?.slice(-6) || 'N/A'}</p>
                             </div>
-                            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
-                                {user?.name ? user.name.substring(0, 2).toUpperCase() : 'P'}
+                            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors overflow-hidden">
+                                {user?.profile_image && !user.profile_image.includes('example.com') ? (
+                                    <img 
+                                        src={user.profile_image} 
+                                        alt={user.name || 'Patient'} 
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            // Fallback to initials if image fails to load
+                                            (e.target as HTMLImageElement).style.display = 'none';
+                                        }}
+                                    />
+                                ) : (
+                                    <span>{user?.name ? user.name.substring(0, 2).toUpperCase() : 'P'}</span>
+                                )}
                             </div>
                         </Link>
                         <Link to="/" className="text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors p-2">

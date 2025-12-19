@@ -34,7 +34,13 @@ const DoctorManagement = () => {
     const handleAddDoctor = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.admin.addDoctor(newDoctor);
+            // Map specialty to specialization for backend
+            const doctorData = {
+                ...newDoctor,
+                specialization: newDoctor.specialty,
+            };
+            delete doctorData.specialty;
+            await api.admin.addDoctor(doctorData);
             toast.success('Doctor added successfully');
             setIsModalOpen(false);
             setNewDoctor({ name: '', specialty: '', email: '', password: '', phone: '', address: '' });
@@ -111,7 +117,7 @@ const DoctorManagement = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{doctor.specialty || 'General'}</td>
+                                        <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{doctor.specialization || doctor.specialty || 'General'}</td>
                                         <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{doctor.email}</td>
                                         <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{doctor.phone || 'N/A'}</td>
                                         <td className="px-6 py-4">
