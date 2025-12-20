@@ -1,11 +1,10 @@
 
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 import uuid
 
-Base = declarative_base()
+from src.Models.usermodel import Base
 
 class Prescription(Base):
     __tablename__ = "prescriptions"

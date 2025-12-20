@@ -32,25 +32,21 @@ import asyncio
 def create_access_token(data: dict, expires_minutes: int = ACCESS_TOKEN_EXPIRE_MINUTES):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
-    to_encode.update({"exp": expire})
+    # JWT requires exp as Unix timestamp (integer), not datetime object
+    # Use calendar.timegm for UTC timestamp calculation
+    import calendar
+    expire_timestamp = int(calendar.timegm(expire.utctimetuple()))
+    to_encode.update({"exp": expire_timestamp})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    
+    # Ensure token is a string (PyJWT 2.x returns string, but be safe)
+    if isinstance(encoded_jwt, bytes):
+        encoded_jwt = encoded_jwt.decode('utf-8')
 
     # Cache the JWT in Redis with expiration if redis_client is available
-    if redis_client:
-        key = f"jwt:{encoded_jwt}"
-        # Calculate TTL in seconds
-        ttl = int((expire - datetime.utcnow()).total_seconds())
-        # Use asyncio to set in Redis (since redis_client is async)
-        async def set_jwt():
-            await redis_client.setex(key, ttl, "valid")
-        try:
-            asyncio.get_event_loop().run_until_complete(set_jwt())
-        except RuntimeError:
-            # If no running event loop, create one
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.run_until_complete(set_jwt())
-            loop.close()
+    # Note: Redis caching is optional and errors should not break JWT generation
+    # Skip Redis caching in sync context to avoid event loop issues
+    # Redis caching can be implemented separately in async endpoints if needed
 
     return encoded_jwt
 
