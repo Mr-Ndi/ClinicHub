@@ -85,7 +85,12 @@
 ---
 
 ## 6. Backend Flow
-
+----
+### Full flow
+#### 1. [Backend](/Backend/README.md)
+#### - [Swagger documentation](https://clinichub-backend-0en7.onrender.com/docs)
+#### 2. [Frontend](/Frontend/README.md)
+----
 ### 6.1 Authentication and Authorization
 - **Login/Signup**:  
   - Handle user authentication via JWT tokens.
@@ -118,3 +123,13 @@
 ### 7.1 Patient Requests to View Appointments
 - **Endpoint**:  
   - `GET /api/appointment
+
+---
+### It's recomended to watch them on the order they are listed
+## 8. System recordings
+### 1. [System adminstrator](https://drive.google.com/file/d/14IbUslDwMTQXgwG6LN_QXAMmRgAtSokU/view?usp=sharing)
+### 2. [Patient panel](https://drive.google.com/file/d/1Em8fTjNjYgU2HW88TM_KeUsTvQ-D6NrR/view?usp=sharing)
+### 3. [Doctor panel](https://drive.google.com/file/d/14IbUslDwMTQXgwG6LN_QXAMmRgAtSokU/view?usp=sharing)
+
+Whole file is dedicacated only to [nexventures@gmail.com](nexventures@gmail.com)
+## [Limk](https://drive.google.com/drive/folders/1UGphf2F8H4IRziE-9-z4Ant8B_EN3Fj0?usp=sharing)

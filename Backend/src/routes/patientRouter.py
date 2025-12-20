@@ -12,6 +12,7 @@ from src.Utils.db import get_db
 from src.Utils.dependencies import get_current_user
 from src.Models.appointmentmodel import Appointment
 from src.Models.prescriptionmodel import Prescription
+from src.Models.medicalrecordmodel import MedicalRecord
 from src.Models.usermodel import User, UserRole
 from src.Controllers.appointmentController import create_appointment_controller
 from src.Controllers.adminController import list_doctors_controller
@@ -71,10 +72,14 @@ def get_patient_appointments(current_user=Depends(get_current_user), db: Session
     # Convert SQLAlchemy objects to dictionaries for JSON serialization
     result = []
     for appointment in appointments:
+        # Fetch doctor information
+        doctor = db.query(User).filter(User.id == appointment.doctor_id).first()
         result.append({
             "id": str(appointment.id),
             "patient_id": str(appointment.patient_id),
             "doctor_id": str(appointment.doctor_id),
+            "doctor_name": doctor.name if doctor else "Unknown Doctor",
+            "doctor_specialization": getattr(doctor, 'specialization', None) or getattr(doctor, 'specialty', None) or "General",
             "date": appointment.date.isoformat() if appointment.date else None,
             "time": appointment.time,
             "status": appointment.status,
@@ -213,4 +218,45 @@ def get_patient_prescriptions(current_user=Depends(get_current_user), db: Sessio
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to retrieve prescriptions: {str(e)}"
+        )
+
+@patientRouter.get("/records")
+def get_patient_medical_records(current_user=Depends(get_current_user), db: Session = Depends(get_db)):
+    """Get all medical records for the authenticated patient"""
+    try:
+        patient_id = current_user.get("user_id")
+        if not patient_id:
+            raise HTTPException(status_code=401, detail="Invalid user token")
+        
+        try:
+            patient_uuid = UUID(patient_id) if isinstance(patient_id, str) else patient_id
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid patient ID format")
+        
+        medical_records = db.query(MedicalRecord).filter(MedicalRecord.patient_id == patient_uuid).all()
+        # Convert SQLAlchemy objects to dictionaries for JSON serialization
+        result = []
+        for record in medical_records:
+            # Fetch doctor information
+            doctor = db.query(User).filter(User.id == record.doctor_id).first()
+            result.append({
+                "id": str(record.id),
+                "patient_id": str(record.patient_id),
+                "doctor_id": str(record.doctor_id),
+                "doctor_name": doctor.name if doctor else "Unknown Doctor",
+                "doctor_specialization": getattr(doctor, 'specialization', None) or getattr(doctor, 'specialty', None) or "General",
+                "type": record.type or "",
+                "title": record.title or "",
+                "date": record.date.isoformat() if record.date else None,
+                "details": record.details or None,
+            })
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error in get_patient_medical_records: {type(e).__name__}: {str(e)}")
+        print(traceback.format_exc())
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to retrieve medical records: {str(e)}"
         )

@@ -1,44 +1,42 @@
-# Byte-compiled / cache
+# Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-
-# Virtual environments
+*$py.class
+*.so
+.Python
+venv/
 chub/
-.env
-.env.local
-.env.*
-
-# Flask instance folder and local config
-instance/
-config.py
-
-# Logs, DBs, and local data
-*.log
-*.sqlite3
-*.db
-
-# Testing / coverage
-.pytest_cache/
-coverage.xml
-htmlcov/
-
-# Build / distribution
-build/
+env/
+ENV/
+*.egg-info/
 dist/
-*.egg-info
+build/
 
-# IDEs / OS files
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
 Thumbs.db
 
-# Git metadata
-.git/
+# Project specific
+*.pdf
+README.md
+alembic/versions/*.py
+!alembic/versions/__init__.py
 
-# Node (if any)
-node_modules/
-# Docker compose overrides (optional)
-docker-compose.override.yml
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
