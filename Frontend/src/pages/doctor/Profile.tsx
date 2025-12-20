@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
@@ -29,11 +29,7 @@ const Profile = () => {
         confirmPassword: '',
     });
 
-    useEffect(() => {
-        fetchProfile();
-    }, []);
-
-    const fetchProfile = async () => {
+    const fetchProfile = useCallback(async () => {
         try {
             setLoading(true);
             const data = await api.doctor.getProfile();
@@ -54,7 +50,11 @@ const Profile = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [authUser]);
+
+    useEffect(() => {
+        fetchProfile();
+    }, [fetchProfile]);
 
     const handlePasswordUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -128,7 +128,7 @@ const Profile = () => {
                 </div>
                 <div>
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{displayProfile.name}</h2>
-                    <p className="text-slate-500 dark:text-slate-400 capitalize">{displayProfile.specialization || 'Doctor'}</p>
+                    <p className="text-slate-500 dark:text-slate-400 capitalize">{(displayProfile as any).specialization || 'Doctor'}</p>
                     <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{displayProfile.email}</p>
                 </div>
             </div>

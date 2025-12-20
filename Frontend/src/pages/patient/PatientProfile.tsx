@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
@@ -31,11 +31,7 @@ const PatientProfile = () => {
         gender: '',
     });
 
-    useEffect(() => {
-        fetchProfile();
-    }, []);
-
-    const fetchProfile = async () => {
+    const fetchProfile = useCallback(async () => {
         try {
             setLoading(true);
             const data = await api.patient.getProfile();
@@ -70,7 +66,11 @@ const PatientProfile = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [authUser]);
+
+    useEffect(() => {
+        fetchProfile();
+    }, [fetchProfile]);
 
     const handleSave = async () => {
         try {

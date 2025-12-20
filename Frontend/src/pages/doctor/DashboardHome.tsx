@@ -21,23 +21,42 @@ const DashboardHome = () => {
         const fetchStats = async () => {
             try {
                 setIsLoading(true);
-                // Fetch dashboard analytics data
-                const dashboardData = await api.doctor.getDashboardData();
+                // Fetch appointments from /api/appointments/
+                const allAppointments = await api.doctor.getAppointments().catch(() => []);
+                const appointmentsArray = Array.isArray(allAppointments) ? allAppointments : [];
                 
-                // Also fetch appointments for the "Next Appointment" section
-                const appointmentsData = await api.doctor.getAppointments().catch(() => []);
-                setAppointments(Array.isArray(appointmentsData) ? appointmentsData : []);
+                // Filter appointments for current doctor
+                const doctorId = user?.user_id;
+                const doctorAppointments = doctorId 
+                    ? appointmentsArray.filter((app: any) => app.doctor_id === doctorId || app.doctor_id === user?.user_id)
+                    : appointmentsArray;
+                
+                setAppointments(doctorAppointments);
 
-                // Format earnings with currency
-                const earningsFormatted = dashboardData.total_earnings 
-                    ? `$${dashboardData.total_earnings.toFixed(2)}` 
-                    : '$0';
+                // Calculate statistics from appointments
+                const today = new Date().toISOString().split('T')[0];
+                const appointmentsToday = doctorAppointments.filter((app: any) => {
+                    const appDate = app.date || app.appointment_date;
+                    if (!appDate) return false;
+                    const dateStr = new Date(appDate).toISOString().split('T')[0];
+                    return dateStr === today;
+                }).length;
+
+                // Get unique patients
+                const uniquePatientIds = new Set(
+                    doctorAppointments.map((app: any) => app.patient_id).filter(Boolean)
+                );
+                const totalPatients = uniquePatientIds.size;
+
+                // For pending reports and earnings, we'll keep them at 0 for now
+                // (these would need prescriptions and billing endpoints)
+                const pendingReports = 0;
 
                 setStats([
-                    { label: 'Total Patients', value: dashboardData.total_patients?.toString() || '0', change: '+0%', color: 'bg-blue-500' },
-                    { label: 'Appointments Today', value: dashboardData.appointments_today?.toString() || '0', change: '+0%', color: 'bg-green-500' },
-                    { label: 'Pending Reports', value: dashboardData.pending_reports?.toString() || '0', change: '-0%', color: 'bg-amber-500' },
-                    { label: 'Total Earnings', value: earningsFormatted, change: '+0%', color: 'bg-purple-500' },
+                    { label: 'Total Patients', value: totalPatients.toString(), change: '+0%', color: 'bg-blue-500' },
+                    { label: 'Appointments Today', value: appointmentsToday.toString(), change: '+0%', color: 'bg-green-500' },
+                    { label: 'Pending Reports', value: pendingReports.toString(), change: '-0%', color: 'bg-amber-500' },
+                    { label: 'Total Earnings', value: '$0', change: '+0%', color: 'bg-purple-500' },
                 ]);
             } catch (error) {
                 console.error('Failed to fetch dashboard stats', error);
@@ -55,7 +74,7 @@ const DashboardHome = () => {
         };
 
         fetchStats();
-    }, []);
+    }, [user]);
 
     const [recentActivity, setRecentActivity] = useState<Array<{ patient: string; action: string; time: string }>>([]);
     

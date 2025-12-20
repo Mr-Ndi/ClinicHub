@@ -40,7 +40,7 @@ const PatientMedicalRecords = () => {
                         return (
                             <div
                                 key={record.record_id || record.id}
-                                onClick={() => toast.info(`Medical Record Details:\nTitle: ${title}\nType: ${recordType}\nDate: ${recordDate}\n\n(Full report would open here)`)}
+                                onClick={() => toast(`Medical Record Details:\nTitle: ${title}\nType: ${recordType}\nDate: ${recordDate}\n\n(Full report would open here)`)}
                                 className="bg-white dark:bg-slate-900 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 hover:shadow-md transition-shadow flex items-center justify-between cursor-pointer"
                             >
                                 <div className="flex items-center gap-4">

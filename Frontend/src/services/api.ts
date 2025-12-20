@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:2739/api';
+// Use environment variable or default to Render deployment
+const API_URL = import.meta.env.VITE_API_URL || 'https://clinichub-backend-0en7.onrender.com/api';
 
 const getHeaders = (includeContentType: boolean = true) => {
     const token = localStorage.getItem('access_token');
@@ -22,7 +23,7 @@ const handleResponse = async (response: Response) => {
         try {
             const text = await response.text();
             error = JSON.parse(text);
-        } catch (e) {
+        } catch {
             // If response is not JSON, create a generic error object
             error = { detail: `HTTP ${response.status}: ${response.statusText}` };
         }
@@ -51,7 +52,7 @@ const handleResponse = async (response: Response) => {
     try {
         const data = await response.json();
         return data;
-    } catch (e) {
+    } catch {
         throw new Error('Invalid response format from server');
     }
 };
@@ -67,7 +68,7 @@ export const api = {
         return handleResponse(response);
     },
     register: async (userData: any) => {
-        const response = await fetch(`${API_URL}/api/patient/register`, {
+        const response = await fetch(`${API_URL}/patient/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userData),
@@ -79,6 +80,12 @@ export const api = {
     patient: {
         getAppointments: async () => {
             const response = await fetch(`${API_URL}/patient/appointments`, {
+                headers: getHeaders(false),
+            });
+            return handleResponse(response);
+        },
+        getDoctors: async () => {
+            const response = await fetch(`${API_URL}/patient/doctors`, {
                 headers: getHeaders(false),
             });
             return handleResponse(response);
@@ -122,7 +129,7 @@ export const api = {
     // Doctor
     doctor: {
         getAppointments: async () => {
-            const response = await fetch(`${API_URL}/doctor/appointments`, {
+            const response = await fetch(`${API_URL}/appointments/`, {
                 headers: getHeaders(false),
             });
             return handleResponse(response);
@@ -189,12 +196,6 @@ export const api = {
             });
             return handleResponse(response);
         },
-        getDashboardData: async () => {
-            const response = await fetch(`${API_URL}/dashboard/doctor/data`, {
-                headers: getHeaders(false),
-            });
-            return handleResponse(response);
-        },
     },
 
     // Admin
@@ -213,7 +214,7 @@ export const api = {
             } catch (error: any) {
                 // If it's a network error, provide a more helpful message
                 if (error.message?.includes('NetworkError') || error.message?.includes('Failed to fetch') || error.name === 'TypeError') {
-                    throw new Error('Network error: Unable to connect to the server. Please check if the backend is running at http://localhost:2739');
+                    throw new Error('Network error: Unable to connect to the server. Please check your connection and try again.');
                 }
                 throw error;
             }
@@ -261,7 +262,7 @@ export const api = {
                 return handleResponse(response);
             } catch (error: any) {
                 if (error.message?.includes('NetworkError') || error.message?.includes('Failed to fetch') || error.name === 'TypeError') {
-                    throw new Error('Network error: Unable to connect to the server. Please check if the backend is running at http://localhost:2739');
+                    throw new Error('Network error: Unable to connect to the server. Please check your connection and try again.');
                 }
                 throw error;
             }
@@ -302,7 +303,7 @@ export const api = {
                 return handleResponse(response);
             } catch (error: any) {
                 if (error.message?.includes('NetworkError') || error.message?.includes('Failed to fetch') || error.name === 'TypeError') {
-                    throw new Error('Network error: Unable to connect to the server. Please check if the backend is running at http://localhost:2739');
+                    throw new Error('Network error: Unable to connect to the server. Please check your connection and try again.');
                 }
                 throw error;
             }

@@ -53,7 +53,7 @@ const Appointments = () => {
         if (newTime === null) return;
 
         // For now, just show a message that this feature needs backend support
-        toast.info('Appointment time update feature requires backend implementation');
+        toast('Appointment time update feature requires backend implementation');
         // TODO: Implement updateAppointment API endpoint
     };
 

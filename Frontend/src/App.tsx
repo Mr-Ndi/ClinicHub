@@ -44,7 +44,35 @@ function App() {
       <Toaster 
         position="top-right" 
         toastOptions={{
-          className: 'dark:bg-slate-800 dark:text-white',
+          duration: 5000,
+          style: {
+            background: 'var(--toast-bg)',
+            color: 'var(--toast-color)',
+            borderRadius: '12px',
+            padding: '16px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+          },
+          className: '',
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+            style: {
+              background: '#f0fdf4',
+              color: '#166534',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+            style: {
+              background: '#fef2f2',
+              color: '#991b1b',
+            },
+          },
         }}
       />
       <Router>

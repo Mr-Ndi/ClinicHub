@@ -35,11 +35,14 @@ const DoctorManagement = () => {
         e.preventDefault();
         try {
             // Map specialty to specialization for backend
-            const doctorData = {
+            const doctorData: Record<string, string> = {
                 ...newDoctor,
                 specialization: newDoctor.specialty,
             };
-            delete doctorData.specialty;
+            // Remove specialty if it exists (we use specialization instead)
+            if ('specialty' in doctorData) {
+                delete doctorData.specialty;
+            }
             await api.admin.addDoctor(doctorData);
             toast.success('Doctor added successfully');
             setIsModalOpen(false);

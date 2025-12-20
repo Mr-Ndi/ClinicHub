@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import { api } from '../services/api';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -9,23 +10,17 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://127.0.0.1:2739/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
+            const data = await api.login({ email, password });
+            
+            // Check if we got a valid response
+            if (data && data.access_token && data.profile) {
                 login(data.access_token, data.profile);
                 toast.success('Login successful! Welcome back.');
 
@@ -38,11 +33,110 @@ const Login = () => {
                     navigate('/patient/dashboard');
                 }
             } else {
-                toast.error(data.message || 'Login failed. Please check your credentials.');
+                throw new Error('Invalid response from server');
             }
-        } catch (err) {
-            toast.error('An error occurred. Please try again later.');
-            console.error('Login error:', err);
+        } catch (err: unknown) {
+            // Handle error with custom toast
+            const errorMessage = err instanceof Error ? err.message : 'Login failed';
+            
+            if (errorMessage.includes('Invalid email or password') || 
+                errorMessage.includes('Authentication required')) {
+                // Show the custom "no account" toast
+                toast.error(
+                    (t) => (
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-start gap-3">
+                                <div className="flex-shrink-0 mt-0.5">
+                                    <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-semibold text-slate-900 dark:text-white">
+                                        No account found
+                                    </p>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                                        There's no account associated with this email address.
+                                    </p>
+                                    <button
+                                        onClick={() => {
+                                            toast.dismiss(t.id);
+                                            navigate('/signup');
+                                        }}
+                                        className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        Create an account instead
+                                    </button>
+                                </div>
+                                <button
+                                    onClick={() => toast.dismiss(t.id)}
+                                    className="flex-shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    ),
+                    {
+                        duration: 6000,
+                        style: {
+                            background: '#fef2f2',
+                            border: '1px solid #fecaca',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            maxWidth: '420px',
+                        },
+                        className: 'dark:bg-red-950/50 dark:border-red-800/50',
+                    }
+                );
+            } else {
+                // Show network error toast
+                toast.error(
+                    (t) => (
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-start gap-3">
+                                <div className="flex-shrink-0 mt-0.5">
+                                    <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="font-semibold text-slate-900 dark:text-white">
+                                        Connection Error
+                                    </p>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                                        Unable to connect to the server. Please check your connection and try again.
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => toast.dismiss(t.id)}
+                                    className="flex-shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    ),
+                    {
+                        duration: 5000,
+                        style: {
+                            background: '#fef2f2',
+                            border: '1px solid #fecaca',
+                            borderRadius: '12px',
+                            padding: '16px',
+                            maxWidth: '420px',
+                        },
+                        className: 'dark:bg-red-950/50 dark:border-red-800/50',
+                    }
+                );
+            }
         } finally {
             setIsLoading(false);
         }
@@ -93,17 +187,33 @@ const Login = () => {
                             <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                                 Password
                             </label>
-                            <div className="mt-1">
+                            <div className="mt-1 relative">
                                 <input
                                     id="password"
                                     name="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     autoComplete="current-password"
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="appearance-none block w-full px-3 py-3 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
+                                    className="appearance-none block w-full px-3 py-3 pr-10 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                                >
+                                    {showPassword ? (
+                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.29 3.29m0 0A9.97 9.97 0 015 12c0 .858.128 1.687.365 2.471M3 3l3.29 3.29m0 0l3.29 3.29m-3.29-3.29l3.29 3.29M12 12l.01.01M21 21l-3.29-3.29m0 0A9.97 9.97 0 0119 12c0-.858-.128-1.687-.365-2.471M21 21l-3.29-3.29m0 0l-3.29-3.29m3.29 3.29L12 12" />
+                                        </svg>
+                                    ) : (
+                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    )}
+                                </button>
                             </div>
                         </div>
 
@@ -137,31 +247,6 @@ const Login = () => {
                             </button>
                         </div>
                     </form>
-
-                    <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
-                        <p className="text-slate-500 dark:text-slate-400 mb-4">For Demo Purposes:</p>
-                        <div className="flex gap-4 justify-center">
-                            <button
-                                onClick={() => {
-                                    setEmail('doctor@clinichub.com');
-                                    setPassword('Doctor#123');
-                                }}
-                                className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-                            >
-                                Doctor Login
-                            </button>
-                            <span className="text-slate-300 dark:text-slate-700">|</span>
-                            <button
-                                onClick={() => {
-                                    setEmail('patient@clinichub.com');
-                                    setPassword('Patient#123');
-                                }}
-                                className="text-sm font-semibold text-green-600 dark:text-green-400 hover:underline"
-                            >
-                                Patient Login
-                            </button>
-                        </div>
-                    </div>
 
                     <div className="mt-6">
                         <div className="relative">
