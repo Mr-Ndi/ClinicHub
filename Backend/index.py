@@ -1,8 +1,13 @@
 import uvicorn
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, Request, status, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import SQLAlchemyError, OperationalError, IntegrityError
+
+# Load environment variables
+load_dotenv()
 from src.routes.patientRouter import patientRouter
 from src.routes.doctorRouter import doctorRouter
 from src.routes.oauthRouter import oauthRouter
@@ -56,12 +61,21 @@ app.openapi = custom_openapi
 # Define allowed origins for CORS FIRST (before exception handlers)
 # IMPORTANT: When allow_credentials=True, we cannot use "*" for origins
 # We must explicitly list all allowed origins
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
+# Read from environment variable CORS_ORIGINS (comma-separated)
+# Default to localhost origins if not set
+CORS_ORIGINS_ENV = os.getenv("CORS_ORIGINS", "")
+if CORS_ORIGINS_ENV:
+    # Parse comma-separated origins from environment variable
+    origins = [origin.strip() for origin in CORS_ORIGINS_ENV.split(",") if origin.strip()]
+else:
+    # Default origins for local development
+    origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://clinic-hub-nu.vercel.app",
+    ]
 
 # Global exception handlers for meaningful error messages
 # Note: HTTPException is handled by FastAPI automatically
